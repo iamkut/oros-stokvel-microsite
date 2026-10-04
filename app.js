@@ -12,13 +12,13 @@
     { name: 'Tropical',  dot: '#ff5a3c', bottle: 'bottle-tropical.png'  },
     { name: 'Guava',     dot: '#e53935', bottle: 'bottle-guava.png'     }
   ];
-  var STORAGE_KEY = 'oros-submissions';
   var STEP_KEY = 'oros-step';
   var SHARE_TEXT = 'Stand the chance to WIN your share of R20 000 with Oros! Enter here: ';
 
   var state = {
     step: 'landing', optIn: null, name: '', phone: '', flavour: '', consent: false
   };
+  var turnstileWidgetId = null;
 
   var $ = function (id) { return document.getElementById(id); };
   var screens = {
@@ -95,6 +95,7 @@
     Object.keys(screens).forEach(function (k) { screens[k].hidden = (k !== step); });
     try { localStorage.setItem(STEP_KEY, step); } catch (e) {}
     clearError();
+    if (step === 'form') mountTurnstile();
     if (step === 'done') updateShareLink();
   }
   function clearError() { $('f-error').textContent = ''; }
@@ -108,18 +109,33 @@
     return null;
   }
 
-  function loadSubmissions() {
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      var arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr : [];
-    } catch (e) { return []; }
+  // ---------- Turnstile ----------
+  function mountTurnstile() {
+    if (turnstileWidgetId !== null) return;
+    var container = $('f-turnstile');
+    var cfg = window.OROS_CONFIG || {};
+    if (!container || !cfg.turnstileSiteKey) return;
+
+    function tryRender() {
+      if (!window.turnstile) { setTimeout(tryRender, 150); return; }
+      turnstileWidgetId = window.turnstile.render(container, {
+        sitekey: cfg.turnstileSiteKey,
+        theme: 'light',
+        size: 'flexible'
+      });
+    }
+    tryRender();
   }
-  function saveSubmission(entry) {
-    var list = loadSubmissions();
-    list.push(entry);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
-    catch (e) { console.warn('Could not persist submission:', e); }
+
+  function getTurnstileToken() {
+    if (!window.turnstile || turnstileWidgetId === null) return '';
+    return window.turnstile.getResponse(turnstileWidgetId) || '';
+  }
+
+  function resetTurnstile() {
+    if (window.turnstile && turnstileWidgetId !== null) {
+      window.turnstile.reset(turnstileWidgetId);
+    }
   }
 
   function updateShareLink() {
@@ -127,75 +143,27 @@
     $('d-share').href = 'https://wa.me/?text=' + encodeURIComponent(SHARE_TEXT + url);
   }
 
-  // ---------- CSV / PDF ----------
-  function toCSV(rows) {
-    if (!rows.length) return '';
-    var cols = ['timestamp', 'name', 'phone', 'flavour', 'optIn', 'consent'];
-    var esc = function (v) {
-      if (v == null) return '';
-      var s = String(v);
-      return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-    };
-    var lines = [cols.join(',')];
-    rows.forEach(function (r) {
-      lines.push(cols.map(function (c) { return esc(r[c]); }).join(','));
-    });
-    return lines.join('\r\n');
+  // ---------- Submit ----------
+  function setSubmitting(on) {
+    var btn = $('f-submit');
+    btn.disabled = on;
+    btn.textContent = on ? 'Submitting...' : 'SUBMIT';
   }
-  function download(filename, content, mime) {
-    var blob = new Blob([content], { type: mime });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-  }
-  function downloadCSV() {
-    var rows = loadSubmissions();
-    if (!rows.length) { alert('No entries yet.'); return; }
-    var stamp = new Date().toISOString().slice(0, 10);
-    download('oros-stokvel-entries-' + stamp + '.csv', '﻿' + toCSV(rows), 'text/csv;charset=utf-8');
-  }
-  function downloadPDF() { window.print(); }
 
-  function escapeHTML(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-  function renderAdmin() {
-    var rows = loadSubmissions();
-    $('admin-meta').textContent = rows.length + ' ' + (rows.length === 1 ? 'entry' : 'entries') +
-      ' - stored locally in this browser (localStorage).';
-    var tbl = $('admin-table');
-    if (!rows.length) {
-      tbl.innerHTML = '<div class="empty">No entries yet. Submissions from the microsite will appear here.</div>';
-      return;
+  async function submitEntry(payload) {
+    var res = await fetch('/api/entries', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var data = {};
+    try { data = await res.json(); } catch (e) {}
+    if (!res.ok) {
+      var err = new Error(data.error || 'Submission failed. Please try again.');
+      err.status = res.status;
+      throw err;
     }
-    var head = '<tr><th>#</th><th>Timestamp</th><th>Name</th><th>Phone</th><th>Flavour</th><th>Opt-in</th><th>Consent</th></tr>';
-    var body = rows.map(function (r, i) {
-      return '<tr>' +
-        '<td>' + (i + 1) + '</td>' +
-        '<td>' + escapeHTML(r.timestamp) + '</td>' +
-        '<td>' + escapeHTML(r.name) + '</td>' +
-        '<td>' + escapeHTML(r.phone) + '</td>' +
-        '<td>' + escapeHTML(r.flavour) + '</td>' +
-        '<td>' + (r.optIn ? 'Yes' : 'No') + '</td>' +
-        '<td>' + (r.consent ? 'Yes' : 'No') + '</td>' +
-      '</tr>';
-    }).join('');
-    tbl.innerHTML = '<table>' + head + body + '</table>';
-  }
-  function clearAll() {
-    if (!confirm('Delete all stored entries from this browser? This cannot be undone.')) return;
-    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-    renderAdmin();
-  }
-  function applyHash() {
-    var isAdmin = location.hash === '#admin';
-    $('admin').hidden = !isAdmin;
-    stage.style.display = isAdmin ? 'none' : '';
-    if (isAdmin) renderAdmin();
+    return data;
   }
 
   // ---------- Wire up ----------
@@ -210,15 +178,29 @@
     e.preventDefault();
     var err = validate();
     if (err) { $('f-error').textContent = err; return; }
-    saveSubmission({
-      timestamp: new Date().toISOString(),
+
+    var token = getTurnstileToken();
+    if (!token) {
+      $('f-error').textContent = 'Please complete the verification challenge.';
+      return;
+    }
+
+    setSubmitting(true);
+    submitEntry({
       name: state.name.trim(),
       phone: state.phone.replace(/\s/g, ''),
       flavour: state.flavour,
       optIn: state.optIn === true,
-      consent: state.consent === true
+      consent: state.consent === true,
+      turnstileToken: token
+    }).then(function () {
+      goTo('done');
+    }).catch(function (ex) {
+      $('f-error').textContent = ex.message;
+      resetTurnstile();
+    }).finally(function () {
+      setSubmitting(false);
     });
-    goTo('done');
   });
 
   $('d-restart').addEventListener('click', function () {
@@ -228,21 +210,14 @@
     $('f-consent').checked = false;
     hideFlavourBottle();
     renderFlavours();
+    resetTurnstile();
     goTo('landing');
   });
-
-  $('a-csv').addEventListener('click', downloadCSV);
-  $('a-pdf').addEventListener('click', downloadPDF);
-  $('a-refresh').addEventListener('click', renderAdmin);
-  $('a-clear').addEventListener('click', clearAll);
-  $('a-back').addEventListener('click', function (e) { e.preventDefault(); location.hash = ''; });
-
-  window.addEventListener('hashchange', applyHash);
 
   renderFlavours();
   try {
     var saved = localStorage.getItem(STEP_KEY);
-    if (saved && screens[saved]) goTo(saved); else goTo('landing');
+    // Never resume on 'done' - re-landing on thank-you after refresh is confusing.
+    if (saved && screens[saved] && saved !== 'done') goTo(saved); else goTo('landing');
   } catch (e) { goTo('landing'); }
-  applyHash();
 })();
