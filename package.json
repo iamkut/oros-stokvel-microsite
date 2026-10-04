@@ -1,0 +1,17 @@
+{
+  "name": "oros-stokvel",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "wrangler pages dev . --d1=DB=oros-stokvel --local",
+    "deploy": "wrangler pages deploy .",
+    "db:create": "wrangler d1 create oros-stokvel",
+    "db:migrate:local": "wrangler d1 execute oros-stokvel --local --file=./schema.sql",
+    "db:migrate:remote": "wrangler d1 execute oros-stokvel --remote --file=./schema.sql"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250101.0",
+    "typescript": "^5.6.0",
+    "wrangler": "^3.90.0"
+  }
+}
