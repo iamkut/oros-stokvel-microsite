@@ -7,14 +7,25 @@ Deployment stack: Cloudflare Pages + Workers (Pages Functions) + D1 + Turnstile 
 
 ## Launch day: flip splash → entry form
 
-The site currently serves `coming-soon.html` content at `/` (the file is named `index.html`) and the entry form at `/form`. On launch day, swap the two filenames so `/` becomes the entry form.
+Pre-launch routing is controlled by a single `_redirects` file at the repo root:
+
+```
+/entry  /index.html         200
+/       /coming-soon.html   302
+```
+
+- `/` → 302 to the coming-soon splash
+- `/entry` → rewrites to serve the entry form (QA access during pre-launch)
+- `/coming-soon.html` → 200 splash (direct URL)
+- `/index.html` → auto-strips to `/` → hits the splash redirect
+
+**Launch is a one-file deletion.** Remove `_redirects` and `/` serves `index.html` (the entry form) directly.
 
 ```bash
 git checkout main
 git pull
-git mv index.html coming-soon.html
-git mv form.html index.html
-git commit -m "Launch: swap splash for entry form at root"
+git rm _redirects
+git commit -m "Launch: enable entry form at root"
 git push origin main
 ```
 
@@ -26,17 +37,20 @@ Cloudflare auto-builds and promotes to production in 1-3 min.
 curl -s https://orosstokvel.co.za/ | grep -oE "<title>[^<]+"
 # expect: <title>Oros Stokvel - Win Your Share of R20 000
 
-curl -sI https://orosstokvel.co.za/index.html | grep -E "^(HTTP|Location)"
-# expect: 308 Permanent Redirect  Location: /
+curl -s -o /dev/null -w "%{http_code}\n" https://orosstokvel.co.za/entry
+# expect: 404 (QA rewrite is gone)
 ```
 
 ### Rollback to splash (if launch is aborted)
 
-Reverse the renames in the same way:
+Restore the file:
 
 ```bash
-git mv index.html form.html
-git mv coming-soon.html index.html
+cat > _redirects <<'EOF'
+/entry  /index.html         200
+/       /coming-soon.html   302
+EOF
+git add _redirects
 git commit -m "Rollback: restore splash at root"
 git push origin main
 ```
@@ -153,9 +167,9 @@ Turnstile auto-skips in local dev (the frontend sees no site key and bypasses th
 
 | Path | Purpose |
 |---|---|
-| `index.html` | What `/` currently serves (splash pre-launch, form post-launch) |
-| `form.html` | Entry form, accessible at `/form` during pre-launch |
-| `coming-soon.html` | Only exists post-launch, splash content |
+| `index.html` | Entry form (served at `/entry` pre-launch via `_redirects`, at `/` post-launch) |
+| `coming-soon.html` | Splash page (served at `/` pre-launch via `_redirects`) |
+| `_redirects` | Pre-launch routing override — deleted on launch day |
 | `admin.html` | Admin dashboard, Access-protected |
 | `app.js`, `styles.css` | Entry-form frontend logic + styles |
 | `functions/api/entries.ts` | Public POST endpoint for submissions |
