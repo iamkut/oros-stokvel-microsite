@@ -12,7 +12,6 @@
     { name: 'Tropical',  dot: '#ff5a3c', bottle: 'bottle-tropical.png'  },
     { name: 'Guava',     dot: '#e53935', bottle: 'bottle-guava.png'     }
   ];
-  var STEP_KEY = 'oros-step';
   var SHARE_TEXT = 'Stand the chance to WIN your share of R20 000 with Oros! Enter here: ';
 
   var state = {
@@ -93,7 +92,6 @@
   function goTo(step) {
     state.step = step;
     Object.keys(screens).forEach(function (k) { screens[k].hidden = (k !== step); });
-    try { localStorage.setItem(STEP_KEY, step); } catch (e) {}
     clearError();
     if (step === 'form') mountTurnstile();
     if (step === 'done') updateShareLink();
@@ -215,9 +213,7 @@
   });
 
   renderFlavours();
-  try {
-    var saved = localStorage.getItem(STEP_KEY);
-    // Never resume on 'done' - re-landing on thank-you after refresh is confusing.
-    if (saved && screens[saved] && saved !== 'done') goTo(saved); else goTo('landing');
-  } catch (e) { goTo('landing'); }
+  // Also clear any step persisted by older versions so returning users land correctly.
+  try { localStorage.removeItem('oros-step'); } catch (e) {}
+  goTo('landing');
 })();

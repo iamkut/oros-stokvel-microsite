@@ -1,10 +1,10 @@
-name = "oros-stokvel"
+name = "oros-stokvel-microsite"
 compatibility_date = "2026-01-01"
 pages_build_output_dir = "."
 
 # Public, safe to commit. Replace once you create the Turnstile widget in CF dashboard.
 [vars]
-TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
+TURNSTILE_SITE_KEY = "0x4AAAAAAFNkE8HlNjCERtbP"
 CAMPAIGN = "stokvel-2026"
 
 # Secrets (set via wrangler, NOT committed):
@@ -15,4 +15,4 @@ CAMPAIGN = "stokvel-2026"
 [[d1_databases]]
 binding = "DB"
 database_name = "oros-stokvel"
-database_id = "REPLACE_AFTER_db:create"
+database_id = "624d2ec2-820e-454b-8147-00a693f0ba15"
