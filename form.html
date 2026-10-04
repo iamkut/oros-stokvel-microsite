@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d2f78">
+<meta name="description" content="Stand a chance to win your share of R20 000 with Oros. Register your stokvel entry.">
+<title>Oros Stokvel - Win Your Share of R20 000</title>
+
+<!-- Open Graph (Facebook, WhatsApp, LinkedIn, iMessage) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oros Stokvel">
+<meta property="og:url" content="https://orosstokvel.co.za/demo">
+<meta property="og:title" content="Oros Stokvel - Win Your Share of R20 000">
+<meta property="og:description" content="Stand a chance to win your share of R20 000 with Oros. Register your stokvel entry.">
+<meta property="og:image" content="https://orosstokvel.co.za/demo/assets/share-card.png">
+<meta property="og:image:secure_url" content="https://orosstokvel.co.za/demo/assets/share-card.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Oros Stokvel - Win your share of R20 000">
+<meta property="og:locale" content="en_ZA">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oros Stokvel - Win Your Share of R20 000">
+<meta name="twitter:description" content="Stand a chance to win your share of R20 000 with Oros. Register your stokvel entry.">
+<meta name="twitter:image" content="https://orosstokvel.co.za/demo/assets/share-card.png">
+<meta name="twitter:image:alt" content="Oros Stokvel - Win your share of R20 000">
+
+<link rel="canonical" href="https://orosstokvel.co.za/demo">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Montserrat:wght@500;700;800&display=swap">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/mascot-icon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/mascot-icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/mascot-icon-180.png">
+<link rel="preload" as="image" href="assets/wordmark.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+</head>
+<body>
+
+<div class="stage" id="stage" data-motion="on" aria-live="polite">
+
+  <!-- ================= LANDING ================= -->
+  <section class="screen landing" id="screen-landing">
+    <!-- Small corner fruits -->
+    <div class="deco landing-fruit-left anim-float" style="top:6%;--depth:2.2">
+      <img src="assets/lemon-small.png" alt="" style="animation-delay:-2.7s">
+    </div>
+    <div class="deco landing-fruit-right anim-float" style="top:7%;--depth:3">
+      <img src="assets/mango.png" alt="" style="animation-delay:-1.8s">
+    </div>
+    <div class="deco landing-fruit-top anim-float" style="top:1%;--depth:2.6">
+      <img src="assets/orange-small.png" alt="" style="animation-delay:-0.9s">
+    </div>
+
+    <!-- Big bottles - positioned BEFORE wordmark so wordmark's OROS logo
+         sits in front of their caps/necks, matching the reference layout.
+         Asymmetric placement: orange left starts higher, yellow right drops
+         lower so the right bottle overlaps the WIN text area. -->
+    <div class="deco landing-bottle-left anim-bob" style="top:30%;--depth:1.4">
+      <img src="assets/splash-left.png" alt="" style="animation-delay:-1.4s">
+    </div>
+    <div class="deco landing-bottle-right anim-bob" style="top:41%;--depth:1.4">
+      <img src="assets/splash-right.png" alt="" style="animation-delay:-2.3s">
+    </div>
+
+    <!-- Wordmark - in front of bottles, large hero element -->
+    <div class="deco landing-wordmark" style="top:7%;--depth:0.6">
+      <img src="assets/wordmark.png" alt="Taste the Fun with Oros">
+    </div>
+    <div class="deco landing-badge anim-spin" style="top:28%;--depth:1.8">
+      <img src="assets/fruit-juice-badge.png" alt="Made with fruit juice" style="animation-delay:-0.5s">
+    </div>
+
+    <div class="promo-stack">
+      <div class="tagline">Stand the chance to</div>
+      <div class="big-win">WIN</div>
+      <div class="share-of">your share of</div>
+      <div class="prize">R20 000</div>
+    </div>
+
+    <div class="yellow-base"></div>
+    <div class="opt-prompt">Do you agree to opt in to future communication from Oros?</div>
+    <div class="opt-buttons">
+      <button class="btn-pill" id="opt-yes" type="button">YES</button>
+      <button class="btn-pill ghost" id="opt-no" type="button">NO</button>
+    </div>
+  </section>
+
+  <!-- ================= FORM ================= -->
+  <section class="screen form" id="screen-form" hidden>
+    <div class="deco form-fruit-top anim-float" style="left:7%;top:2%;--depth:3">
+      <img src="assets/orange-small.png" alt="" style="animation-delay:-3.2s">
+    </div>
+    <div class="deco form-fruit-right anim-float" style="right:7%;top:4.5%;--depth:2.2">
+      <img src="assets/mango.png" alt="" style="animation-delay:-0.1s">
+    </div>
+    <div class="deco form-fruit-left anim-float" style="left:3%;top:20%;--depth:2.6">
+      <img src="assets/lemon-small.png" alt="" style="animation-delay:-1.0s">
+    </div>
+    <div class="deco form-wordmark" style="top:1%;--depth:0.6">
+      <img src="assets/wordmark.png" alt="Taste the Fun with Oros">
+    </div>
+
+    <!-- Flavour bottle popup - src set + .show class toggled when a flavour pill is picked -->
+    <div class="flavour-popup" id="f-popup" aria-hidden="true">
+      <img src="" alt="">
+    </div>
+
+    <div class="yellow-sweep"></div>
+    <div class="ribbon">Please enter your<br>details below:</div>
+
+    <form class="card" id="entry-form" novalidate>
+      <label class="field">Name and Surname:
+        <input type="text" id="f-name" placeholder="e.g Thando Dlamini" autocomplete="name" required>
+      </label>
+      <label class="field">Contact Number:
+        <input type="tel" id="f-phone" placeholder="e.g 082 123 4567" autocomplete="tel" inputmode="tel" required>
+      </label>
+      <div class="field">What is your favourite Oros Flavour?
+        <div class="flavours" id="f-flavours" role="radiogroup" aria-label="Favourite flavour"></div>
+      </div>
+      <label class="consent">
+        <input type="checkbox" id="f-consent">
+        <span>I am 18 or older and accept the
+          <a href="https://www.orosstokvel.co.za/terms.html" target="_blank" rel="noopener">Ts &amp; Cs</a>,
+          and consent to Oros processing my details for this competition (POPIA).
+        </span>
+      </label>
+      <div class="cf-turnstile" id="f-turnstile" data-sitekey="" data-theme="light" data-size="flexible"></div>
+      <div class="error" id="f-error" role="alert"></div>
+      <button type="submit" class="submit" id="f-submit">SUBMIT</button>
+    </form>
+
+    <div class="orange-base" style="top:92.5%;height:10%"></div>
+    <div class="footer">
+      Data rates apply. Visit
+      <span class="fb-dot">f</span>
+      <a href="https://www.facebook.com/myoros/" target="_blank" rel="noopener">myoros</a>
+      for Ts and Cs. Competition closes 15 December 2026
+    </div>
+  </section>
+
+  <!-- ================= DONE ================= -->
+  <section class="screen done" id="screen-done" hidden>
+    <div class="deco anim-float" style="left:7%;top:12%;width:8cqw;--depth:2.2">
+      <img src="assets/orange-small.png" alt="" style="animation-delay:-2.8s">
+    </div>
+    <div class="deco anim-float" style="left:82%;top:6%;width:11cqw;--depth:2.6">
+      <img src="assets/lemon-small.png" alt="" style="animation-delay:-3.7s">
+    </div>
+    <div class="deco" style="left:28%;top:3%;width:44cqw;--depth:0.6">
+      <img src="assets/wordmark.png" alt="Taste the Fun with Oros">
+    </div>
+    <div class="deco anim-spin" style="left:74%;top:20%;width:15cqw;--depth:1.8">
+      <img src="assets/fruit-juice-badge.png" alt="Made with fruit juice" style="animation-delay:-1.5s">
+    </div>
+
+    <!-- Big product bottles anchor the bottom third, emerging from the orange
+         ground curve. DOM-before text/buttons so they can be large without
+         obscuring the CTAs. -->
+    <div class="deco anim-bob" style="left:-8%;top:72%;width:40cqw;--depth:1.4;--r:6deg">
+      <img src="assets/splash-left.png" alt="" style="animation-delay:-3.3s">
+    </div>
+    <div class="deco anim-bob" style="left:68%;top:72%;width:40cqw;--depth:1.4;--r:-4deg">
+      <img src="assets/splash-right.png" alt="" style="animation-delay:-0.2s">
+    </div>
+
+    <div class="thankyou">THANK YOU!</div>
+    <div class="entered">you have been entered into the competition.</div>
+    <div class="goodluck">Winners are contacted by SMS. Good luck!</div>
+
+    <a class="share" id="d-share" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+        <path d="M16 2.7C8.6 2.7 2.7 8.6 2.7 16c0 2.3.6 4.6 1.8 6.7L2.7 29.3l6.8-1.8A13.3 13.3 0 0 0 16 29.2c7.4 0 13.3-6 13.3-13.3 0-3.6-1.4-6.9-3.9-9.4A13.3 13.3 0 0 0 16 2.7zm0 2.3c3 0 5.7 1.1 7.8 3.2a11 11 0 0 1 3.2 7.8c0 6.1-5 11.1-11.1 11.1a11 11 0 0 1-5.6-1.5l-.4-.3-4.1 1 1.1-4-.3-.4a11 11 0 0 1-1.7-6c0-6.1 5-11.1 11.1-11.1zm-4.7 4.9c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.3 3.7 5.7 5 2.8 1.1 3.4.9 4 .8s2-.8 2.2-1.6c.3-.8.3-1.4.2-1.6-.1-.1-.3-.2-.6-.4-.3-.2-2-1-2.3-1.1-.3-.1-.5-.2-.8.2s-.9 1.1-1 1.3c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.7-1.6-1-.9-1.6-2-1.9-2.3-.2-.3 0-.5.1-.7.1-.1.3-.4.5-.6l.3-.5c.1-.2.1-.4 0-.6s-.7-1.8-1-2.5c-.3-.6-.5-.5-.7-.6h-.6z"/>
+      </svg>
+      Share with your stokvel
+    </a>
+    <button class="restart" id="d-restart" type="button">Enter another member</button>
+
+    <div class="orange-base-done"></div>
+
+    <div class="deco anim-float" style="left:45%;top:82%;width:10cqw;--depth:2.6">
+      <img src="assets/mango.png" alt="" style="animation-delay:-2.4s">
+    </div>
+  </section>
+
+</div>
+
+<script src="/api/config"></script>
+<script src="app.js"></script>
+</body>
+</html>
