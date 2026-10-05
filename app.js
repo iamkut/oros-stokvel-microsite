@@ -4,11 +4,11 @@
   // The seven Oros 2L squash variants shown in the reference line-up.
   // Selecting a flavour swaps `.flavour-popup img`'s src to the matching PNG.
   var FLAVOURS = [
-    { name: 'Original',  dot: '#f58220', bottle: 'bottle-original.png'  },
+    { name: 'Orange',    dot: '#f58220', bottle: 'bottle-original.png'  },
     { name: 'Naartjie',  dot: '#ff6a1a', bottle: 'bottle-naartjie.png'  },
     { name: 'Mango',     dot: '#ffb000', bottle: 'bottle-mango.png'     },
     { name: 'Pineapple', dot: '#ffd54f', bottle: 'bottle-pineapple.png' },
-    { name: 'Twist',     dot: '#8bc34a', bottle: 'bottle-twist.png'     },
+    { name: 'Lemos',     dot: '#8bc34a', bottle: 'bottle-twist.png'     },
     { name: 'Tropical',  dot: '#ff5a3c', bottle: 'bottle-tropical.png'  },
     { name: 'Guava',     dot: '#e53935', bottle: 'bottle-guava.png'     }
   ];
