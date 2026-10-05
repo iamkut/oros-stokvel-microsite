@@ -93,7 +93,7 @@
     state.step = step;
     Object.keys(screens).forEach(function (k) { screens[k].hidden = (k !== step); });
     clearError();
-    if (step === 'form') mountTurnstile();
+    // PARKED: Turnstile disabled — restore `if (step === 'form') mountTurnstile();` to re-enable.
     if (step === 'done') updateShareLink();
   }
   function clearError() { $('f-error').textContent = ''; }
@@ -177,20 +177,14 @@
     var err = validate();
     if (err) { $('f-error').textContent = err; return; }
 
-    var token = getTurnstileToken();
-    if (!token) {
-      $('f-error').textContent = 'Please complete the verification challenge.';
-      return;
-    }
-
+    // PARKED: Turnstile disabled — restore the token check and `turnstileToken: token` field to re-enable.
     setSubmitting(true);
     submitEntry({
       name: state.name.trim(),
       phone: state.phone.replace(/\s/g, ''),
       flavour: state.flavour,
       optIn: state.optIn === true,
-      consent: state.consent === true,
-      turnstileToken: token
+      consent: state.consent === true
     }).then(function () {
       goTo('done');
     }).catch(function (ex) {
