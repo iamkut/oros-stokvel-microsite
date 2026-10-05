@@ -701,13 +701,8 @@ input::placeholder { color: #BABABA; }
   box-shadow: 0 1.2cqw 2.4cqw rgba(0, 0, 0, 0.25);
   animation: pop 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s both;
 }
-.done .orange-base-done {
-  position: absolute;
-  left: -10%; top: 92%;
-  width: 120%; height: 14%;
-  background: var(--oros-orange);
-  border-radius: 50% 50% 0 0 / 50% 50% 0 0;
-}
+.done .done-splatter { width: min(38cqw, 21.375cqh); z-index: 0; }
+.done .done-splatter img { transform: rotate(-32deg); transform-origin: center; }
 
 /* ---------- Admin dashboard ---------- */
 body.admin-page {
