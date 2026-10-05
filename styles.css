@@ -1069,10 +1069,10 @@ body.admin-page.login-page {
   margin-bottom: 22px;
 }
 .login-mascot {
-  width: 92px;
-  height: 92px;
+  width: 128px;
+  height: 128px;
   object-fit: contain;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
   filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.4));
 }
 .login-brand h1 {
