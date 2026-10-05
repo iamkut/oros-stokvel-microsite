@@ -19,5 +19,5 @@ export interface EntryPayload {
 }
 
 export const FLAVOURS = [
-  'Orange', 'Tropical', 'Guava', 'Lemos', 'Naartjie', 'Mango', 'Pineapple'
+  'Orange', 'Tropical', 'Guava', 'Lemos', 'Naartjie', 'Mango', 'Pineapple', 'Passionfruit'
 ];

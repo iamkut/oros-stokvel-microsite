@@ -29,9 +29,9 @@
 <meta name="twitter:image:alt" content="Oros Stokvel - Win your share of R20 000">
 
 <link rel="canonical" href="https://orosstokvel.co.za/demo">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Montserrat:wght@500;700;800&display=swap">
+<link rel="preload" as="font" href="assets/fonts/Nunito-Regular.ttf" type="font/ttf" crossorigin>
+<link rel="preload" as="font" href="assets/fonts/Nunito-ExtraBold.ttf" type="font/ttf" crossorigin>
+<link rel="preload" as="font" href="assets/fonts/Nunito-Black.ttf" type="font/ttf" crossorigin>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/mascot-icon-32.png">
 <link rel="icon" type="image/png" sizes="512x512" href="assets/mascot-icon-512.png">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/mascot-icon-180.png">
@@ -81,11 +81,13 @@
       <div class="tagline">Stand the chance to</div>
       <div class="big-win">WIN</div>
       <div class="share-of">your share of</div>
-      <div class="prize">R20 000</div>
+      <div class="prize">
+        <img class="prize-img" src="assets/mobile/Prize_Mobile.png" alt="R20 000">
+      </div>
     </div>
 
     <div class="yellow-base"></div>
-    <div class="opt-prompt">Do you agree to opt in to future communication from Oros?</div>
+    <div class="opt-prompt">Do you agree to opt in to future communication from Oros</div>
     <div class="opt-buttons">
       <button class="btn-pill" id="opt-yes" type="button">YES</button>
       <button class="btn-pill ghost" id="opt-no" type="button">NO</button>
@@ -94,6 +96,17 @@
 
   <!-- ================= FORM ================= -->
   <section class="screen form" id="screen-form" hidden>
+    <button type="button" class="back-btn" id="f-back" aria-label="Back to landing">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <div class="deco form-splatter-left" style="left:8%;top:14%;--depth:1.4">
+      <img src="assets/mobile/Page 2_Splatter_1.png" alt="">
+    </div>
+    <div class="deco form-splatter-right" style="right:8%;top:12%;--depth:1.4">
+      <img src="assets/mobile/Page 2_Splatter.png" alt="">
+    </div>
     <div class="deco form-fruit-top anim-float" style="left:7%;top:2%;--depth:3">
       <img src="assets/orange-small.png" alt="" style="animation-delay:-3.2s">
     </div>
@@ -107,7 +120,7 @@
       <img src="assets/wordmark.png" alt="Taste the Fun with Oros">
     </div>
 
-    <!-- Flavour bottle popup - src set + .show class toggled when a flavour pill is picked -->
+    <!-- Flavour bottle popup - src set + .show class toggled when a flavour is picked -->
     <div class="flavour-popup" id="f-popup" aria-hidden="true">
       <img src="" alt="">
     </div>
@@ -123,7 +136,15 @@
         <input type="tel" id="f-phone" placeholder="e.g 082 123 4567" autocomplete="tel" inputmode="tel" required>
       </label>
       <div class="field">What is your favourite Oros Flavour?
-        <div class="flavours" id="f-flavours" role="radiogroup" aria-label="Favourite flavour"></div>
+        <div class="flavour-dd" id="f-flavour-dd">
+          <button type="button" class="flavour-dd-btn" id="f-flavour-btn"
+                  aria-haspopup="listbox" aria-expanded="false">
+            <span class="dot" id="f-flavour-dot" aria-hidden="true"></span>
+            <span class="flavour-dd-label" id="f-flavour-label">Select a flavour</span>
+            <svg class="flavour-dd-chevron" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <ul class="flavour-dd-list" id="f-flavour-list" role="listbox" tabindex="-1" hidden></ul>
+        </div>
       </div>
       <label class="consent">
         <input type="checkbox" id="f-consent">
@@ -144,7 +165,7 @@
     <div class="footer">
       Data rates apply. Visit
       
-      <a href="https://www.facebook.com/myoros/" target="_blank" rel="noopener"><span class="fb-dot">f</span> myoros</a>
+      <a href="https://www.facebook.com/myoros/" target="_blank" rel="noopener"><img class="fb-icon" src="assets/mobile/Facebook_Icon.png" alt=""> myoros</a>
       for Ts and Cs. Competition closes 15 December 2026
     </div>
   </section>
@@ -175,16 +196,8 @@
     </div>
 
     <div class="thankyou">THANK YOU!</div>
-    <div class="entered">you have been entered into the competition.</div>
-    <div class="goodluck">Winners are contacted by SMS. Good luck!</div>
-
-    <a class="share" id="d-share" href="#" target="_blank" rel="noopener">
-      <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
-        <path d="M16 2.7C8.6 2.7 2.7 8.6 2.7 16c0 2.3.6 4.6 1.8 6.7L2.7 29.3l6.8-1.8A13.3 13.3 0 0 0 16 29.2c7.4 0 13.3-6 13.3-13.3 0-3.6-1.4-6.9-3.9-9.4A13.3 13.3 0 0 0 16 2.7zm0 2.3c3 0 5.7 1.1 7.8 3.2a11 11 0 0 1 3.2 7.8c0 6.1-5 11.1-11.1 11.1a11 11 0 0 1-5.6-1.5l-.4-.3-4.1 1 1.1-4-.3-.4a11 11 0 0 1-1.7-6c0-6.1 5-11.1 11.1-11.1zm-4.7 4.9c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.3 3.7 5.7 5 2.8 1.1 3.4.9 4 .8s2-.8 2.2-1.6c.3-.8.3-1.4.2-1.6-.1-.1-.3-.2-.6-.4-.3-.2-2-1-2.3-1.1-.3-.1-.5-.2-.8.2s-.9 1.1-1 1.3c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.7-1.6-1-.9-1.6-2-1.9-2.3-.2-.3 0-.5.1-.7.1-.1.3-.4.5-.6l.3-.5c.1-.2.1-.4 0-.6s-.7-1.8-1-2.5c-.3-.6-.5-.5-.7-.6h-.6z"/>
-      </svg>
-      Share with your stokvel
-    </a>
-    <button class="restart" id="d-restart" type="button">Enter another member</button>
+    <div class="entered">you have been entered into<br>the competition.</div>
+    <div class="goodluck-pill" aria-hidden="false">Good luck!</div>
 
     <div class="orange-base-done"></div>
 
