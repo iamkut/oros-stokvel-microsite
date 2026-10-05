@@ -1,33 +1,22 @@
-name = "oros-stokvel-microsite"
+name = "oros-stokvel-microsite-staging"
 compatibility_date = "2026-01-01"
 pages_build_output_dir = "."
 
-# ---------- Production (main branch) ----------
-# Public, safe to commit. Replace once you create the Turnstile widget in CF dashboard.
-[vars]
-TURNSTILE_SITE_KEY = "0x4AAAAAAFNkE8HlNjCERtbP"
-CAMPAIGN = "stokvel-2026"
+# This file lives on the `staging` branch and powers the
+# `oros-stokvel-microsite-staging` Pages project (production branch: staging).
+# The production project (`oros-stokvel-microsite`, main branch) has its own
+# wrangler.toml with the prod D1/vars.
 
-# Secrets (set via wrangler, NOT committed):
-#   wrangler pages secret put TURNSTILE_SECRET
-#   wrangler pages secret put DAILY_SALT
-# For preview, append `--env=preview` to each command.
-
-[[d1_databases]]
-binding = "DB"
-database_name = "oros-stokvel"
-database_id = "624d2ec2-820e-454b-8147-00a693f0ba15"
-
-# ---------- Preview (all non-production branches) ----------
 # Cloudflare's always-passes Turnstile test key — safe for staging.
-[env.preview.vars]
+[vars]
 TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
 CAMPAIGN = "stokvel-2026-staging"
 
-# TODO: replace database_id after running:
-#   wrangler d1 create oros-stokvel-staging
-#   wrangler d1 execute oros-stokvel-staging --file=schema.sql --remote
-[[env.preview.d1_databases]]
+# Secrets (set via dashboard or wrangler, NOT committed):
+#   wrangler pages secret put DAILY_SALT --project-name=oros-stokvel-microsite-staging
+#   wrangler pages secret put TURNSTILE_SECRET --project-name=oros-stokvel-microsite-staging
+
+[[d1_databases]]
 binding = "DB"
 database_name = "oros-stokvel-staging"
 database_id = "23f5b507-a4b3-4317-8bc3-13e9ff04b645"
