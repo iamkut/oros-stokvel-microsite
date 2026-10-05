@@ -1,6 +1,6 @@
 import type { Env, EntryPayload } from '../_shared/types';
 import { FLAVOURS } from '../_shared/types';
-import { json, sha256, verifyTurnstile } from '../_shared/util';
+import { json, normalizePhone, sha256, verifyTurnstile } from '../_shared/util';
 
 const MAX_PER_IP_PER_HOUR = 5;
 
@@ -18,11 +18,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   // if (!turnstileOk) return json({ error: 'Verification failed. Please try again.' }, 400);
 
   const name = (body.name ?? '').trim();
-  const phone = (body.phone ?? '').replace(/\s/g, '');
+  const phone = normalizePhone(body.phone ?? '');
   const flavour = body.flavour ?? '';
 
   if (name.length < 2) return json({ error: 'Please enter your name and surname.' }, 400);
-  if (!/^(\+27|0)\d{9}$/.test(phone)) return json({ error: 'Please enter a valid SA contact number.' }, 400);
+  if (!phone) return json({ error: 'Please enter a valid SA contact number.' }, 400);
   if (!FLAVOURS.includes(flavour)) return json({ error: 'Please select a flavour.' }, 400);
   if (body.consent !== true) return json({ error: 'Please confirm you are 18+ and accept the Ts & Cs.' }, 400);
 
