@@ -1,13 +1,6 @@
 import type { Env } from '../../_shared/types';
-
-interface Row {
-  created_at: string;
-  name: string;
-  phone: string;
-  flavour: string;
-  opt_in: number;
-  consent: number;
-}
+import { parseFilters, queryEntries, toSAST } from '../../_shared/entries-query';
+import { requireAdmin } from '../../_shared/auth';
 
 function csvEscape(v: unknown): string {
   if (v == null) return '';
@@ -15,29 +8,18 @@ function csvEscape(v: unknown): string {
   return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
 
-// Convert a UTC ISO string to a SAST ISO string with +02:00 offset.
-// SA has no DST, so the offset is constant.
-function toSAST(iso: string): string {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return iso;
-  const shifted = new Date(d.getTime() + 2 * 60 * 60 * 1000);
-  return shifted.toISOString().replace('Z', '+02:00');
-}
-
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
-  const actor = request.headers.get('CF-Access-Authenticated-User-Email');
-  if (!actor) return new Response('Unauthorized', { status: 401 });
+  const auth = await requireAdmin(request, env);
+  if (auth instanceof Response) return auth;
+  const actor = auth.actor;
 
-  const rows = await env.DB.prepare(
-    `SELECT created_at, name, phone, flavour, opt_in, consent
-     FROM submissions
-     WHERE campaign = ?
-     ORDER BY created_at DESC`
-  ).bind(env.CAMPAIGN).all<Row>();
+  const url = new URL(request.url);
+  const filters = parseFilters(url);
+  const rows = await queryEntries(env, filters);
 
   const header = ['timestamp', 'name', 'phone', 'flavour', 'opt_in', 'consent'];
   const lines = [header.join(',')];
-  for (const r of rows.results ?? []) {
+  for (const r of rows) {
     lines.push([
       csvEscape(toSAST(r.created_at)),
       csvEscape(r.name),
@@ -51,7 +33,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
   await env.DB.prepare(
     `INSERT INTO audit_log (actor, action, details) VALUES (?, 'export', ?)`
-  ).bind(actor, JSON.stringify({ count: rows.results?.length ?? 0 })).run();
+  ).bind(actor, JSON.stringify({ format: 'csv', count: rows.length, filters })).run();
 
   const stamp = new Date().toISOString().slice(0, 10);
   return new Response(csv, {

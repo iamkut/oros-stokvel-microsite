@@ -4,6 +4,9 @@ export interface Env {
   TURNSTILE_SITE_KEY: string;
   DAILY_SALT: string;
   CAMPAIGN: string;
+  ADMIN_USERNAME: string;
+  ADMIN_PASSWORD: string;
+  SESSION_SECRET: string;
 }
 
 export interface EntryPayload {

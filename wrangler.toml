@@ -11,10 +11,14 @@ pages_build_output_dir = "."
 [vars]
 TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
 CAMPAIGN = "stokvel-2026-staging"
+ADMIN_USERNAME = "admin"
 
 # Secrets (set via dashboard or wrangler, NOT committed):
 #   wrangler pages secret put DAILY_SALT --project-name=oros-stokvel-microsite-staging
 #   wrangler pages secret put TURNSTILE_SECRET --project-name=oros-stokvel-microsite-staging
+#   wrangler pages secret put ADMIN_PASSWORD --project-name=oros-stokvel-microsite-staging
+#   wrangler pages secret put SESSION_SECRET --project-name=oros-stokvel-microsite-staging
+# For local dev, put the same values in .dev.vars (gitignored).
 
 [[d1_databases]]
 binding = "DB"

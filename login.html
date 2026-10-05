@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1d2f78">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'">
+<title>Oros Stokvel - Sign in</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/mascot-icon-32.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-page login-page">
+
+<main class="login-wrap">
+  <div class="login-card">
+    <div class="login-brand">
+      <img src="assets/mascot.png" alt="" class="login-mascot">
+      <h1>Oros Stokvel</h1>
+      <p>Admin dashboard</p>
+    </div>
+
+    <form id="login-form" class="login-form" novalidate>
+      <label class="fld">
+        <span>Username</span>
+        <input id="l-user" name="username" type="text" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+      </label>
+      <label class="fld">
+        <span>Password</span>
+        <input id="l-pass" name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <div class="login-error" id="l-error" hidden></div>
+      <button type="submit" id="l-submit" class="btn btn-primary login-submit">Sign in</button>
+    </form>
+  </div>
+</main>
+
+<script src="login.js"></script>
+</body>
+</html>
