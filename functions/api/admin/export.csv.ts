@@ -15,6 +15,15 @@ function csvEscape(v: unknown): string {
   return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
 
+// Convert a UTC ISO string to a SAST ISO string with +02:00 offset.
+// SA has no DST, so the offset is constant.
+function toSAST(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const shifted = new Date(d.getTime() + 2 * 60 * 60 * 1000);
+  return shifted.toISOString().replace('Z', '+02:00');
+}
+
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const actor = request.headers.get('CF-Access-Authenticated-User-Email');
   if (!actor) return new Response('Unauthorized', { status: 401 });
@@ -30,7 +39,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const lines = [header.join(',')];
   for (const r of rows.results ?? []) {
     lines.push([
-      csvEscape(r.created_at),
+      csvEscape(toSAST(r.created_at)),
       csvEscape(r.name),
       csvEscape(r.phone),
       csvEscape(r.flavour),

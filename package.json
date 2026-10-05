@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "wrangler pages dev . --d1=DB=oros-stokvel --local",
+    "dev": "wrangler pages dev . --local",
     "deploy": "wrangler pages deploy .",
     "db:create": "wrangler d1 create oros-stokvel",
     "db:migrate:local": "wrangler d1 execute oros-stokvel --local --file=./schema.sql",

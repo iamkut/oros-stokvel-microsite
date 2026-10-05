@@ -646,9 +646,17 @@ input::placeholder { color: #9a9a9a; }
 }
 
 /* ---------- Admin ---------- */
+body.admin-page {
+  display: block;
+  overflow: auto;
+  background: #0f1538;
+  align-items: initial;
+  justify-content: initial;
+}
+body.admin-page a:hover { color: inherit; }
 .admin {
-  position: fixed;
-  inset: 0;
+  position: static;
+  min-height: 100vh;
   background: #0f1538;
   color: #fff;
   padding: 24px;
@@ -681,12 +689,18 @@ input::placeholder { color: #9a9a9a; }
   cursor: pointer;
   text-decoration: none;
   font-family: inherit;
+  line-height: 1.2;
 }
-.admin button:hover { background: var(--oros-pink-hover); }
-.admin button.secondary { background: #2a3875; }
-.admin button.secondary:hover { background: #3d4d94; }
-.admin button.danger { background: #4a1a2a; }
-.admin button.danger:hover { background: #7a2a44; }
+.admin button:hover,
+.admin .link-btn:hover { background: var(--oros-pink-hover); color: #fff; }
+.admin button.secondary,
+.admin .link-btn.secondary { background: #2a3875; }
+.admin button.secondary:hover,
+.admin .link-btn.secondary:hover { background: #3d4d94; color: #fff; }
+.admin button.danger,
+.admin .link-btn.danger { background: #4a1a2a; }
+.admin button.danger:hover,
+.admin .link-btn.danger:hover { background: #7a2a44; color: #fff; }
 .admin table {
   width: 100%;
   border-collapse: collapse;
