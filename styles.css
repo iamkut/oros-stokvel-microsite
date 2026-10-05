@@ -641,7 +641,8 @@ input::placeholder { color: #BABABA; }
 }
 .submit[disabled] { opacity: 0.6; cursor: wait; }
 
-.form .footer {
+.form .footer,
+.done .footer {
   position: absolute;
   left: 5%; top: 94%;
   width: 90%;
@@ -655,15 +656,17 @@ input::placeholder { color: #BABABA; }
   line-height: 1.6;
   text-align: center;
 }
-.form .footer .fb-icon {
+.done .footer { z-index: 4; }
+.form .footer .fb-icon,
+.done .footer .fb-icon {
   display: inline-block;
   width: min(3.6cqw, 2.025cqh);
   height: min(3.6cqw, 2.025cqh);
   vertical-align: middle;
   margin-right: min(0.6cqw, 0.3375cqh);
 }
-.form .footer a { display: inline-flex; align-items: center; }
-.form .footer a { color: #fff; text-decoration: none; font-weight: 800; }
+.form .footer a,
+.done .footer a { display: inline-flex; align-items: center; color: #fff; text-decoration: none; font-weight: 800; }
 
 /* ---------- Done ---------- */
 .done .thankyou {
@@ -732,7 +735,7 @@ input::placeholder { color: #BABABA; }
   height: 60%;
   display: block;
 }
-.done .done-splatter { width: min(38cqw, 21.375cqh); z-index: 0; }
+.done .done-splatter { width: min(30.4cqw, 17.1cqh); z-index: 0; }
 .done .done-splatter img { transform: rotate(-32deg); transform-origin: center; }
 
 /* ---------- Admin dashboard ---------- */
