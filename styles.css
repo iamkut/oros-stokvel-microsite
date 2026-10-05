@@ -686,9 +686,11 @@ input::placeholder { color: #BABABA; }
 }
 .done .goodluck-pill {
   position: absolute;
-  left: 50%;
+  left: 0;
+  right: 0;
   top: 60%;
-  transform: translateX(-50%);
+  width: fit-content;
+  margin-inline: auto;
   padding: min(2.4cqw, 1.35cqh) min(8cqw, 4.5cqh);
   border-radius: 999px;
   background: var(--oros-yellow);
@@ -700,6 +702,35 @@ input::placeholder { color: #BABABA; }
   text-align: center;
   box-shadow: 0 1.2cqw 2.4cqw rgba(0, 0, 0, 0.25);
   animation: pop 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s both;
+}
+
+.done .restart-btn {
+  position: absolute;
+  left: 3%;
+  top: 1.5%;
+  width: min(9cqw, 5.0625cqh);
+  height: min(9cqw, 5.0625cqh);
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--oros-pink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  z-index: 4;
+  opacity: 0.65;
+  box-shadow: 0 min(1cqw, 0.5625cqh) min(2.5cqw, 1.4cqh) rgba(0, 0, 0, 0.25);
+  transition: transform 0.12s, background 0.15s, opacity 0.15s;
+}
+.done .restart-btn:hover,
+.done .restart-btn:focus-visible { background: #fff; opacity: 1; }
+.done .restart-btn:active { transform: scale(0.9); }
+.done .restart-btn svg {
+  width: 60%;
+  height: 60%;
+  display: block;
 }
 .done .done-splatter { width: min(38cqw, 21.375cqh); z-index: 0; }
 .done .done-splatter img { transform: rotate(-32deg); transform-origin: center; }

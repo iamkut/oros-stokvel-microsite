@@ -220,6 +220,23 @@
     });
   });
 
+  $('d-restart').addEventListener('click', function () {
+    state = { step: 'landing', optIn: null, name: '', phone: '', flavour: '', consent: false };
+    $('f-name').value = '';
+    $('f-phone').value = '';
+    $('f-consent').checked = false;
+    ddLabel.textContent = 'Select a flavour';
+    ddDot.style.background = '';
+    ddBtn.classList.remove('selected');
+    Array.prototype.forEach.call(ddList.children, function (li) {
+      li.setAttribute('aria-selected', 'false');
+    });
+    closeDropdown();
+    hideFlavourBottle();
+    resetTurnstile();
+    goTo('landing');
+  });
+
   // Also clear any step persisted by older versions so returning users land correctly.
   try { localStorage.removeItem('oros-step'); } catch (e) {}
   goTo('landing');
