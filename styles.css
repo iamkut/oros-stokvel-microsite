@@ -202,13 +202,13 @@ input::placeholder { color: #BABABA; }
 
 @media (min-width: 600px) {
   .landing-bottle-left {
-    left: -15%;
-    width: min(44cqw, 24.75cqh);
+    left: -8%;
+    width: min(40cqw, 22.5cqh);
   }
 
   .landing-bottle-right {
-    right: -7%;
-    width: min(38cqw, 21.375cqh);
+    right: -4%;
+    width: min(36cqw, 20.25cqh);
   }
 }
 .landing-wordmark {
@@ -660,7 +660,7 @@ input::placeholder { color: #BABABA; }
 .form .footer,
 .done .footer {
   position: absolute;
-  left: 5%; top: 92.8%;
+  left: 5%; top: 95%;
   width: 90%;
   display: flex;
   flex-wrap: wrap;
