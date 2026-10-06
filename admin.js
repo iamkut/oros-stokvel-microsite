@@ -328,16 +328,19 @@
   }
 
   function loadMe() {
-    fetch('/api/admin/me', { credentials: 'include' })
-      .then(function (r) { return r.ok ? r.json() : null; })
+    return fetch('/api/admin/me', { credentials: 'include' })
+      .then(function (r) {
+        if (r.status === 401) { goToLogin(); return null; }
+        return r.ok ? r.json() : null;
+      })
       .then(function (data) {
         if (data && data.user) {
           var el = $('db-user');
           el.textContent = 'Signed in as ' + data.user;
           el.hidden = false;
         }
-      })
-      .catch(function () {});
+        return data;
+      });
   }
 
   function resetFilters() {
@@ -371,6 +374,11 @@
     if (e.key === '/') { e.preventDefault(); $('f-q').focus(); }
   });
 
-  loadMe();
-  load();
+  loadMe()
+    .then(function (data) {
+      if (!data) return;
+      document.body.style.visibility = 'visible';
+      load();
+    })
+    .catch(goToLogin);
 })();
