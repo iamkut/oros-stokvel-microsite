@@ -19,12 +19,12 @@
   function setLookupBusy(on) {
     var btn = $('c-lookup');
     btn.disabled = on;
-    btn.textContent = on ? 'Looking up...' : 'Look up my entry';
+    btn.textContent = on ? 'Looking up...' : 'Search';
   }
   function setSaveBusy(on) {
     var btn = $('c-save');
     btn.disabled = on;
-    btn.textContent = on ? 'Saving...' : 'Save preference';
+    btn.textContent = on ? 'Saving...' : 'Save';
   }
 
   function showResult(data) {
