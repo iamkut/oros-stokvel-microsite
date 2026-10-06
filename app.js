@@ -12,8 +12,14 @@
     { name: 'Passionfruit', dot: '#6a1b9a', bottle: 'bottle-passionfruit.png' }
   ];
 
+  var PROVINCES = [
+    'Eastern Cape', 'Free State', 'Gauteng', 'KwaZulu-Natal',
+    'Limpopo', 'Mpumalanga', 'Northern Cape', 'North West', 'Western Cape'
+  ];
+
   var state = {
-    step: 'landing', optIn: null, name: '', phone: '', flavour: '', consent: false
+    step: 'landing', optIn: null, name: '', phone: '',
+    flavour: '', province: '', consent: false
   };
   var turnstileWidgetId = null;
 
@@ -57,6 +63,7 @@
     var phone = state.phone.replace(/\s/g, '');
     if (!/^(\+27|0)\d{9}$/.test(phone)) return 'Please enter a valid SA contact number.';
     if (!state.flavour) return 'Please select a flavour.';
+    if (!state.province) return 'Please select your province.';
     if (!state.consent) return 'Please confirm you are 18+ and accept the Ts & Cs.';
     return null;
   }
@@ -168,7 +175,8 @@
 
   ddBtn.addEventListener('click', function (e) {
     e.stopPropagation();
-    if (ddList.hidden) openDropdown(); else closeDropdown();
+    if (ddList.hidden) { closeProvinceDropdown(); openDropdown(); }
+    else closeDropdown();
   });
   document.addEventListener('click', function (e) {
     if (!ddList.hidden && !$('f-flavour-dd').contains(e.target)) closeDropdown();
@@ -177,6 +185,56 @@
     if (e.key === 'Escape' && !ddList.hidden) {
       closeDropdown();
       ddBtn.focus();
+    }
+  });
+
+  // ---------- Province dropdown (reuses flavour-dd styling) ----------
+  var pvBtn   = $('f-province-btn');
+  var pvList  = $('f-province-list');
+  var pvLabel = $('f-province-label');
+
+  PROVINCES.forEach(function (p) {
+    var li = document.createElement('li');
+    li.className = 'flavour-dd-opt';
+    li.setAttribute('role', 'option');
+    li.setAttribute('data-value', p);
+    li.setAttribute('aria-selected', 'false');
+    li.innerHTML = '<span>' + p + '</span>';
+    li.addEventListener('click', function () { selectProvince(p); });
+    pvList.appendChild(li);
+  });
+
+  function openProvinceDropdown() {
+    pvList.hidden = false;
+    pvBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeProvinceDropdown() {
+    pvList.hidden = true;
+    pvBtn.setAttribute('aria-expanded', 'false');
+  }
+  function selectProvince(p) {
+    state.province = p;
+    pvLabel.textContent = p;
+    pvBtn.classList.add('selected');
+    Array.prototype.forEach.call(pvList.children, function (li) {
+      li.setAttribute('aria-selected', li.getAttribute('data-value') === p ? 'true' : 'false');
+    });
+    closeProvinceDropdown();
+    clearError();
+  }
+
+  pvBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (pvList.hidden) { closeDropdown(); openProvinceDropdown(); }
+    else closeProvinceDropdown();
+  });
+  document.addEventListener('click', function (e) {
+    if (!pvList.hidden && !$('f-province-dd').contains(e.target)) closeProvinceDropdown();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !pvList.hidden) {
+      closeProvinceDropdown();
+      pvBtn.focus();
     }
   });
 
@@ -208,6 +266,7 @@
       name: state.name.trim(),
       phone: state.phone.replace(/\s/g, ''),
       flavour: state.flavour,
+      province: state.province,
       optIn: state.optIn === true,
       consent: state.consent === true
     }).then(function () {
@@ -221,7 +280,10 @@
   });
 
   $('d-restart').addEventListener('click', function () {
-    state = { step: 'landing', optIn: null, name: '', phone: '', flavour: '', consent: false };
+    state = {
+      step: 'landing', optIn: null, name: '', phone: '',
+      flavour: '', province: '', consent: false
+    };
     $('f-name').value = '';
     $('f-phone').value = '';
     $('f-consent').checked = false;
@@ -231,7 +293,13 @@
     Array.prototype.forEach.call(ddList.children, function (li) {
       li.setAttribute('aria-selected', 'false');
     });
+    pvLabel.textContent = 'Select your province';
+    pvBtn.classList.remove('selected');
+    Array.prototype.forEach.call(pvList.children, function (li) {
+      li.setAttribute('aria-selected', 'false');
+    });
     closeDropdown();
+    closeProvinceDropdown();
     hideFlavourBottle();
     resetTurnstile();
     goTo('landing');

@@ -6,6 +6,7 @@ export interface EntryRow {
   name: string;
   phone: string;
   flavour: string;
+  province: string | null;
   opt_in: number;
   consent: number;
 }
@@ -13,6 +14,7 @@ export interface EntryRow {
 export interface EntryFilters {
   q?: string;
   flavour?: string;
+  province?: string;
   optIn?: '1' | '0';
   from?: string; // YYYY-MM-DD in SAST
   to?: string;   // YYYY-MM-DD in SAST
@@ -28,6 +30,7 @@ export function parseFilters(url: URL): EntryFilters {
   return {
     q: g('q'),
     flavour: g('flavour'),
+    province: g('province'),
     optIn,
     from: g('from'),
     to: g('to')
@@ -69,6 +72,10 @@ export async function queryEntries(
     where.push('flavour = ?');
     binds.push(filters.flavour);
   }
+  if (filters.province) {
+    where.push('province = ?');
+    binds.push(filters.province);
+  }
   if (filters.optIn === '1' || filters.optIn === '0') {
     where.push('opt_in = ?');
     binds.push(Number(filters.optIn));
@@ -83,7 +90,7 @@ export async function queryEntries(
   }
 
   let sql =
-    `SELECT id, created_at, name, phone, flavour, opt_in, consent
+    `SELECT id, created_at, name, phone, flavour, province, opt_in, consent
        FROM submissions
       WHERE ${where.join(' AND ')}
       ORDER BY created_at DESC`;

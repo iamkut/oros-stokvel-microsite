@@ -13,6 +13,7 @@ export interface EntryPayload {
   name?: string;
   phone?: string;
   flavour?: string;
+  province?: string;
   optIn?: boolean;
   consent?: boolean;
   turnstileToken?: string;
@@ -20,4 +21,16 @@ export interface EntryPayload {
 
 export const FLAVOURS = [
   'Orange', 'Tropical', 'Guava', 'Lemos', 'Naartjie', 'Mango', 'Pineapple', 'Passionfruit'
+];
+
+export const PROVINCES = [
+  'Eastern Cape',
+  'Free State',
+  'Gauteng',
+  'KwaZulu-Natal',
+  'Limpopo',
+  'Mpumalanga',
+  'Northern Cape',
+  'North West',
+  'Western Cape'
 ];

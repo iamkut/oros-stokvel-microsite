@@ -38,6 +38,7 @@
     return {
       q: $('f-q').value.trim(),
       flavour: $('f-flavour').value,
+      province: $('f-province').value,
       optIn: $('f-optin').value,
       from: $('f-from').value,
       to: $('f-to').value
@@ -47,6 +48,7 @@
     var p = new URLSearchParams();
     if (f.q) p.set('q', f.q);
     if (f.flavour) p.set('flavour', f.flavour);
+    if (f.province) p.set('province', f.province);
     if (f.optIn) p.set('optIn', f.optIn);
     if (f.from) p.set('from', f.from);
     if (f.to) p.set('to', f.to);
@@ -61,6 +63,7 @@
           (r.phone || '').toLowerCase().indexOf(ql) === -1) return false;
     }
     if (f.flavour && r.flavour !== f.flavour) return false;
+    if (f.province && r.province !== f.province) return false;
     if (f.optIn === '1' && !r.opt_in) return false;
     if (f.optIn === '0' && r.opt_in) return false;
     if (f.from || f.to) {
@@ -189,6 +192,7 @@
     { key: 'name', label: 'Name', sortable: true },
     { key: 'phone', label: 'Phone', sortable: true },
     { key: 'flavour', label: 'Flavour', sortable: true },
+    { key: 'province', label: 'Province', sortable: true },
     { key: 'opt_in', label: 'Opt-in', sortable: true },
     { key: 'consent', label: 'Consent', sortable: true }
   ];
@@ -256,6 +260,7 @@
       appendCell(tr, r.name || '');
       appendCell(tr, r.phone || '', 'mono');
       appendCell(tr, r.flavour || '');
+      appendCell(tr, r.province || '');
       appendBadge(tr, r.opt_in, 'Yes', 'No');
       appendBadge(tr, r.consent, 'Yes', 'No');
       tbody.appendChild(tr);
@@ -338,6 +343,7 @@
   function resetFilters() {
     $('f-q').value = '';
     $('f-flavour').value = '';
+    $('f-province').value = '';
     $('f-optin').value = '';
     $('f-from').value = '';
     $('f-to').value = '';
@@ -350,7 +356,7 @@
     if (qTimer) clearTimeout(qTimer);
     qTimer = setTimeout(renderAll, 150);
   });
-  ['f-flavour', 'f-optin', 'f-from', 'f-to'].forEach(function (id) {
+  ['f-flavour', 'f-province', 'f-optin', 'f-from', 'f-to'].forEach(function (id) {
     $(id).addEventListener('change', renderAll);
   });
 

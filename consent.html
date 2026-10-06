@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1d2f78">
+<meta name="description" content="Manage your Oros Stokvel marketing consent.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Oros Stokvel - Manage consent</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/mascot-icon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/mascot-icon-512.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-page login-page consent-page">
+
+<main class="login-wrap">
+  <div class="login-card">
+    <div class="login-brand">
+      <img src="assets/mascot.png" alt="Oros Stokvel" class="login-mascot">
+      <h1>Manage your consent</h1>
+      <p>Update marketing preferences</p>
+    </div>
+
+    <form id="lookup-form" class="login-form" novalidate>
+      <label class="fld">
+        <span>Contact number</span>
+        <input id="c-phone" name="phone" type="tel" inputmode="tel"
+               autocomplete="tel" placeholder="e.g 082 123 4567" required>
+      </label>
+      <div class="login-error" id="c-error" hidden></div>
+      <button type="submit" id="c-lookup" class="btn btn-primary login-submit">Look up my entry</button>
+    </form>
+
+    <div class="consent-result" id="c-result" hidden>
+      <p class="consent-greet" id="c-greet"></p>
+      <label class="consent-toggle">
+        <input type="checkbox" id="c-optin">
+        <span class="consent-toggle-track" aria-hidden="true"></span>
+        <span class="consent-toggle-text">I agree to receive marketing communication from Oros.</span>
+      </label>
+      <div class="login-error" id="c-save-error" hidden></div>
+      <div class="consent-success" id="c-success" hidden>Preference saved.</div>
+      <button type="button" id="c-save" class="btn btn-primary login-submit">Save preference</button>
+      <button type="button" id="c-cancel" class="btn btn-ghost consent-cancel">Look up a different number</button>
+    </div>
+
+    <p class="consent-foot">
+      <a href="/">Back to home</a> &middot;
+      <a href="terms.html">Terms &amp; Conditions</a>
+    </p>
+  </div>
+</main>
+
+<script src="consent.js"></script>
+</body>
+</html>

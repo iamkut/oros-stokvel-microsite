@@ -18,6 +18,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const parts: string[] = [`${rows.length} entries`, `Generated ${generatedSast}`];
   if (filters.q) parts.push(`search="${filters.q}"`);
   if (filters.flavour) parts.push(`flavour=${filters.flavour}`);
+  if (filters.province) parts.push(`province=${filters.province}`);
   if (filters.optIn === '1') parts.push('opt-in=yes');
   if (filters.optIn === '0') parts.push('opt-in=no');
   if (filters.from) parts.push(`from=${filters.from}`);
@@ -27,18 +28,20 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     title: 'Oros Stokvel - Entries',
     subtitle: parts.join('  |  '),
     columns: [
-      { header: 'Timestamp (SAST)', width: 140 },
-      { header: 'Name', width: 170 },
-      { header: 'Phone', width: 110 },
-      { header: 'Flavour', width: 110 },
-      { header: 'Opt-in', width: 60 },
-      { header: 'Consent', width: 60 }
+      { header: 'Timestamp (SAST)', width: 130 },
+      { header: 'Name', width: 150 },
+      { header: 'Phone', width: 100 },
+      { header: 'Flavour', width: 100 },
+      { header: 'Province', width: 110 },
+      { header: 'Opt-in', width: 55 },
+      { header: 'Consent', width: 55 }
     ],
     rows: rows.map(r => [
       toSASTHuman(r.created_at),
       r.name,
       r.phone,
       r.flavour,
+      r.province ?? '',
       r.opt_in ? 'Yes' : 'No',
       r.consent ? 'Yes' : 'No'
     ])
