@@ -1348,21 +1348,22 @@ body.terms-page {
 .terms-article ul { padding-left: 20px; }
 .terms-article li { margin-bottom: 4px; }
 .terms-article a { color: var(--oros-yellow); }
+.terms-article .clause { margin-bottom: 10px; }
+.terms-article .clause.indent { padding-left: 28px; }
+.terms-article section { margin-bottom: 20px; }
+.terms-article .terms-aside {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: rgba(10, 155, 224, 0.1);
+  border-left: 3px solid var(--oros-cyan);
+  border-radius: 4px;
+  font-size: 13px;
+}
 .terms-meta {
   color: #9fb0e8;
   font-size: 13px;
   margin-bottom: 20px;
 }
-.terms-placeholder-note {
-  background: rgba(252, 217, 46, 0.1);
-  border: 1px solid rgba(252, 217, 46, 0.4);
-  color: #fce38a;
-  padding: 12px 14px;
-  border-radius: 10px;
-  margin-bottom: 24px;
-  font-size: 13px;
-}
-.terms-placeholder-note strong { color: var(--oros-yellow); }
 .terms-foot {
   margin-top: 32px;
   padding-top: 20px;
