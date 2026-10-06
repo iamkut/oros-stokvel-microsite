@@ -1283,6 +1283,12 @@ body.admin-page.login-page {
 }
 .consent-foot a { color: #d7defa; text-decoration: none; }
 .consent-foot a:hover { color: var(--oros-yellow); }
+.consent-foot-note {
+  margin-top: 6px;
+  color: #7a8bbd;
+  font-size: 11px;
+  font-style: italic;
+}
 
 /* ---------- Terms page ---------- */
 body.terms-page {
