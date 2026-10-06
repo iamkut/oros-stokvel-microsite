@@ -3,6 +3,34 @@
 Short reference for recurring operational tasks on the live site.
 Deployment stack: Cloudflare Pages + Workers (Pages Functions) + D1 + Turnstile + Zero Trust Access.
 
+> **⚠ Turnstile is currently PARKED.** The entry form submits without CAPTCHA verification. See [Pre-launch: un-park Turnstile](#pre-launch-un-park-turnstile) before go-live.
+
+---
+
+## Pre-launch: un-park Turnstile
+
+Turnstile verification was temporarily disabled during pre-launch work. The relevant code is still in the tree, marked with `PARKED:` comments. Un-parking is a straight revert of five edits — no infra changes needed (the production `TURNSTILE_SECRET` is still set in Pages, and `TURNSTILE_SITE_KEY` is still in `wrangler.toml`).
+
+Find all un-park points:
+
+```bash
+grep -rn "PARKED:" .
+```
+
+You'll find them in:
+
+| File | What to restore |
+|---|---|
+| `functions/api/entries.ts` | Uncomment the `verifyTurnstile` call + the 400 return |
+| `app.js` (goTo) | Restore `if (step === 'form') mountTurnstile();` |
+| `app.js` (submit handler) | Restore the token-presence check and `turnstileToken: token` payload field |
+| `index.html` (`<head>`) | Uncomment the Turnstile `<script>` tag |
+| `index.html` (form) | Uncomment the `<div class="cf-turnstile">` widget |
+
+After un-parking, test locally with Cloudflare's test keys (see [Local development](#local-development)) before pushing.
+
+**Risk of leaving Turnstile parked at go-live:** the only submission-rate defense is `MAX_PER_IP_PER_HOUR = 5` in [`functions/api/entries.ts`](functions/api/entries.ts) + the `UNIQUE(campaign, phone)` DB constraint. Bots can still burn through the IP cap and pollute the DB.
+
 ---
 
 ## Launch day: flip splash → entry form
@@ -151,7 +179,29 @@ npm run dev
 # http://localhost:8788
 ```
 
-Turnstile auto-skips in local dev (the frontend sees no site key and bypasses the check), so form submits work without the challenge.
+While Turnstile is parked (see top of this doc), the form submits locally without a CAPTCHA challenge.
+
+### Testing with Turnstile re-enabled
+
+Once un-parked, use Cloudflare's always-pass test keys (public, documented by Cloudflare) so you don't need a real widget locally:
+
+1. In `wrangler.toml` temporarily set `TURNSTILE_SITE_KEY = "1x00000000000000000000AA"`.
+2. In `.dev.vars` add `TURNSTILE_SECRET="1x0000000000000000000000000000000AA"`.
+3. Restart `npm run dev`. The widget auto-solves, the token POSTs, and `siteverify` returns `success: true`.
+
+Other Cloudflare test variants for exercising failure paths:
+
+| Purpose | Site key | Secret |
+|---|---|---|
+| Always passes | `1x00000000000000000000AA` | `1x0000000000000000000000000000000AA` |
+| Always blocks | `2x00000000000000000000AB` | `2x0000000000000000000000000000000AA` |
+| Token always invalid server-side | — | `3x0000000000000000000000000000000AA` |
+
+**Revert `wrangler.toml` before committing.** `.dev.vars` is gitignored; `wrangler.toml` is not.
+
+### Local D1 gotcha
+
+`wrangler pages dev` and `wrangler d1 execute --local` must resolve to the **same** local SQLite file in `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`. The dev script now relies on the `[[d1_databases]]` binding in `wrangler.toml` (no `--d1` CLI flag), which keeps both commands in sync. If you ever hit `D1_ERROR: no such table: submissions` from the dev server after a successful `npm run db:migrate:local`, you've got two SQLite files — re-run migrate after wiping `.wrangler/state/v3/d1/`.
 
 ---
 

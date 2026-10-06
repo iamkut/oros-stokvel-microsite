@@ -5,77 +5,149 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#1d2f78">
 <meta name="robots" content="noindex, nofollow">
-<title>Oros Stokvel - Admin</title>
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'">
+<title>Oros Stokvel - Dashboard</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/mascot-icon-32.png">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="admin-page">
 
-<div class="admin" id="admin">
-  <h1>Oros Stokvel - Entries</h1>
-  <div class="meta" id="admin-meta">Loading...</div>
-  <div class="actions">
-    <a class="link-btn" id="a-csv" href="/api/admin/export.csv">Download CSV</a>
-    <button type="button" id="a-pdf" class="secondary">Print / PDF</button>
-    <button type="button" id="a-refresh" class="secondary">Refresh</button>
-    <a class="link-btn secondary" href="/">Back to microsite</a>
-  </div>
-  <div id="admin-table"></div>
+<div class="dashboard" id="dashboard">
+  <header class="db-header">
+    <div class="db-title">
+      <img src="assets/mascot.png" alt="" class="db-logo">
+      <div>
+        <h1>Oros Stokvel</h1>
+        <p class="db-sub" id="db-sub">Loading entries...</p>
+      </div>
+    </div>
+    <nav class="db-nav">
+      <span class="db-user" id="db-user" hidden></span>
+      <button type="button" id="btn-refresh" class="btn btn-ghost" title="Refresh (R)">
+        <span aria-hidden="true">&#x21bb;</span> Refresh
+      </button>
+      <a class="btn btn-ghost" href="/">Back to site</a>
+      <button type="button" id="btn-logout" class="btn btn-ghost">Sign out</button>
+    </nav>
+  </header>
+
+  <section class="kpi-row" aria-label="Summary">
+    <article class="kpi">
+      <span class="kpi-label">Total entries</span>
+      <strong class="kpi-value" id="kpi-total">-</strong>
+      <span class="kpi-foot" id="kpi-total-foot">&nbsp;</span>
+    </article>
+    <article class="kpi">
+      <span class="kpi-label">Today (SAST)</span>
+      <strong class="kpi-value" id="kpi-today">-</strong>
+      <span class="kpi-foot" id="kpi-today-foot">&nbsp;</span>
+    </article>
+    <article class="kpi">
+      <span class="kpi-label">Marketing opt-ins</span>
+      <strong class="kpi-value" id="kpi-optin">-</strong>
+      <span class="kpi-foot" id="kpi-optin-foot">&nbsp;</span>
+    </article>
+    <article class="kpi">
+      <span class="kpi-label">Top flavour</span>
+      <strong class="kpi-value" id="kpi-topflav">-</strong>
+      <span class="kpi-foot" id="kpi-topflav-foot">&nbsp;</span>
+    </article>
+  </section>
+
+  <section class="db-grid">
+    <div class="card card-filters">
+      <header class="card-h">
+        <h2>Filters</h2>
+        <button type="button" id="btn-reset" class="btn-link">Reset</button>
+      </header>
+      <div class="filters">
+        <label class="fld">
+          <span>Search</span>
+          <input id="f-q" type="search" placeholder="Name or phone" autocomplete="off">
+        </label>
+        <label class="fld">
+          <span>Flavour</span>
+          <select id="f-flavour">
+            <option value="">All</option>
+            <option>Orange</option>
+            <option>Tropical</option>
+            <option>Guava</option>
+            <option>Lemos</option>
+            <option>Naartjie</option>
+            <option>Mango</option>
+            <option>Pineapple</option>
+            <option>Passionfruit</option>
+          </select>
+        </label>
+        <label class="fld">
+          <span>Province</span>
+          <select id="f-province">
+            <option value="">All</option>
+            <option>Eastern Cape</option>
+            <option>Free State</option>
+            <option>Gauteng</option>
+            <option>KwaZulu-Natal</option>
+            <option>Limpopo</option>
+            <option>Mpumalanga</option>
+            <option>Northern Cape</option>
+            <option>North West</option>
+            <option>Western Cape</option>
+          </select>
+        </label>
+        <label class="fld">
+          <span>Marketing</span>
+          <select id="f-optin">
+            <option value="">All</option>
+            <option value="1">Opted in</option>
+            <option value="0">Not opted in</option>
+          </select>
+        </label>
+        <label class="fld">
+          <span>From</span>
+          <input id="f-from" type="date">
+        </label>
+        <label class="fld">
+          <span>To</span>
+          <input id="f-to" type="date">
+        </label>
+      </div>
+    </div>
+
+    <div class="card card-breakdown">
+      <header class="card-h">
+        <h2>Flavour breakdown</h2>
+        <span class="card-h-note" id="breakdown-note"></span>
+      </header>
+      <div class="breakdown" id="breakdown"></div>
+    </div>
+
+    <div class="card card-exports">
+      <header class="card-h">
+        <h2>Export</h2>
+        <span class="card-h-note">Filters apply</span>
+      </header>
+      <div class="exports">
+        <a class="btn btn-primary" id="x-csv" href="#" download>CSV</a>
+        <a class="btn btn-primary" id="x-xlsx" href="#" download>Excel (XLSX)</a>
+        <a class="btn btn-primary" id="x-pdf" href="#" download>PDF</a>
+        <button type="button" id="btn-print" class="btn btn-ghost">Print</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card card-table">
+    <header class="card-h">
+      <h2>Entries</h2>
+      <span class="card-h-note" id="table-note"></span>
+    </header>
+    <div class="table-wrap" id="table-wrap">
+      <div class="empty">Loading...</div>
+    </div>
+  </section>
 </div>
 
-<script>
-(function () {
-  'use strict';
-  var $ = function (id) { return document.getElementById(id); };
-
-  function escapeHTML(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-
-  function render(entries) {
-    $('admin-meta').textContent = entries.length + ' ' +
-      (entries.length === 1 ? 'entry' : 'entries') + '.';
-    var tbl = $('admin-table');
-    if (!entries.length) {
-      tbl.innerHTML = '<div class="empty">No entries yet.</div>';
-      return;
-    }
-    var head = '<tr><th>#</th><th>Timestamp</th><th>Name</th><th>Phone</th>' +
-      '<th>Flavour</th><th>Opt-in</th><th>Consent</th></tr>';
-    var body = entries.map(function (r, i) {
-      return '<tr>' +
-        '<td>' + (i + 1) + '</td>' +
-        '<td>' + escapeHTML(r.created_at) + '</td>' +
-        '<td>' + escapeHTML(r.name) + '</td>' +
-        '<td>' + escapeHTML(r.phone) + '</td>' +
-        '<td>' + escapeHTML(r.flavour) + '</td>' +
-        '<td>' + (r.opt_in ? 'Yes' : 'No') + '</td>' +
-        '<td>' + (r.consent ? 'Yes' : 'No') + '</td>' +
-      '</tr>';
-    }).join('');
-    tbl.innerHTML = '<table>' + head + body + '</table>';
-  }
-
-  function load() {
-    $('admin-meta').textContent = 'Loading...';
-    fetch('/api/admin/entries', { credentials: 'include' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
-      .then(function (data) { render(data.entries || []); })
-      .catch(function (err) {
-        $('admin-meta').textContent = 'Failed to load entries: ' + err.message;
-      });
-  }
-
-  $('a-pdf').addEventListener('click', function () { window.print(); });
-  $('a-refresh').addEventListener('click', load);
-
-  load();
-})();
-</script>
+<script src="admin.js"></script>
 </body>
 </html>

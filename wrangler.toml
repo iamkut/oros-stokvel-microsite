@@ -6,10 +6,13 @@ pages_build_output_dir = "."
 [vars]
 TURNSTILE_SITE_KEY = "0x4AAAAAAFNkE8HlNjCERtbP"
 CAMPAIGN = "stokvel-2026"
+ADMIN_USERNAME = "admin"
 
-# Secrets (set via wrangler, NOT committed):
+# Secrets (set via dashboard or wrangler, NOT committed):
 #   wrangler pages secret put TURNSTILE_SECRET
 #   wrangler pages secret put DAILY_SALT
+#   wrangler pages secret put ADMIN_PASSWORD
+#   wrangler pages secret put SESSION_SECRET
 
 # D1 binding. Fill database_id after `npm run db:create`.
 [[d1_databases]]
