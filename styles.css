@@ -90,8 +90,10 @@ input::placeholder { color: #BABABA; }
 .screen[hidden] { display: none; }
 
 /* Larger desktop displays present the portrait experience as a tactile,
-   embossed card while phones and tablets remain completely edge-to-edge. */
-@media (min-width: 1200px) and (min-height: 700px) and (hover: hover) and (pointer: fine) {
+   embossed card while phones and tablets remain completely edge-to-edge.
+   Size-only predicates: hover/pointer media features proved unreliable
+   across staging browsers (same window, different results). */
+@media (min-width: 1200px) and (min-height: 700px) {
   body { padding: 4vh 4vw; }
 
   .stage {
