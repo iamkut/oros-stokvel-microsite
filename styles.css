@@ -93,7 +93,7 @@ input::placeholder { color: #BABABA; }
    embossed card while phones and tablets remain completely edge-to-edge.
    Size-only predicates: hover/pointer media features proved unreliable
    across staging browsers (same window, different results). */
-@media (min-width: 1024px) and (min-height: 600px) {
+@media (min-width: 800px) {
   body { padding: 4vh 4vw; }
 
   .stage {
