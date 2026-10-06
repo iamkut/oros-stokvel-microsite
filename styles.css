@@ -299,7 +299,7 @@ input::placeholder { color: #BABABA; }
 
 .landing .opt-prompt {
   position: absolute;
-  left: 10%; top: 86.5%;
+  left: 10%; top: 84.5%;
   width: 80%;
   text-align: center;
   font-weight: 800;
@@ -309,7 +309,7 @@ input::placeholder { color: #BABABA; }
 }
 .landing .opt-buttons {
   position: absolute;
-  left: 0; right: 0; top: 92.5%;
+  left: 0; right: 0; top: 90.5%;
   width: min(52%, 29.25cqh);
   height: 5.2%;
   margin-inline: auto;
@@ -344,7 +344,7 @@ input::placeholder { color: #BABABA; }
 .landing-manage-consent {
   position: absolute;
   left: 10%;
-  top: 98%;
+  top: 96%;
   width: 80%;
   text-align: center;
   color: var(--oros-opt);
@@ -440,7 +440,7 @@ input::placeholder { color: #BABABA; }
   gap: min(1.6cqw, 0.9cqh);
   color: var(--oros-text);
 }
-.form label.field {
+.form .field {
   display: flex;
   flex-direction: column;
   gap: min(1.2cqw, 0.675cqh);
@@ -660,7 +660,7 @@ input::placeholder { color: #BABABA; }
 .form .footer,
 .done .footer {
   position: absolute;
-  left: 5%; top: 94%;
+  left: 5%; top: 92.8%;
   width: 90%;
   display: flex;
   flex-wrap: wrap;
@@ -668,8 +668,8 @@ input::placeholder { color: #BABABA; }
   justify-content: center;
   gap: 0 min(1.2cqw, 0.675cqh);
   font-weight: 800;
-  font-size: min(2.6cqw, 1.4625cqh);
-  line-height: 1.6;
+  font-size: min(2.4cqw, 1.35cqh);
+  line-height: 1.35;
   text-align: center;
 }
 .done .footer { z-index: 4; }
