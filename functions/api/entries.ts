@@ -13,9 +13,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   const ip = request.headers.get('CF-Connecting-IP');
-  // PARKED: Turnstile verification disabled. Restore the two lines below to re-enable.
-  // const turnstileOk = await verifyTurnstile(body.turnstileToken, env.TURNSTILE_SECRET, ip);
-  // if (!turnstileOk) return json({ error: 'Verification failed. Please try again.' }, 400);
+  const turnstileOk = await verifyTurnstile(body.turnstileToken, env.TURNSTILE_SECRET, ip);
+  if (!turnstileOk) return json({ error: 'Verification failed. Please try again.' }, 400);
 
   const name = (body.name ?? '').trim();
   const phone = normalizePhone(body.phone ?? '');
