@@ -22,6 +22,7 @@
     flavour: '', province: '', consent: false
   };
   var turnstileWidgetId = null;
+  var formOpenedAt = 0;
 
   var $ = function (id) { return document.getElementById(id); };
   var screens = {
@@ -54,7 +55,10 @@
     state.step = step;
     Object.keys(screens).forEach(function (k) { screens[k].hidden = (k !== step); });
     clearError();
-    // PARKED: Turnstile disabled — restore `if (step === 'form') mountTurnstile();` to re-enable.
+    if (step === 'form') {
+      if (!formOpenedAt) formOpenedAt = Date.now();
+      mountTurnstile();
+    }
   }
   function clearError() { $('f-error').textContent = ''; }
 
@@ -260,15 +264,21 @@
     var err = validate();
     if (err) { $('f-error').textContent = err; return; }
 
-    // PARKED: Turnstile disabled — restore the token check and `turnstileToken: token` field to re-enable.
+    var token = getTurnstileToken();
+    if (!token) { $('f-error').textContent = 'Please complete the verification challenge.'; return; }
+
     setSubmitting(true);
+    var hp = $('f-website');
     submitEntry({
       name: state.name.trim(),
       phone: state.phone.replace(/\s/g, ''),
       flavour: state.flavour,
       province: state.province,
       optIn: state.optIn === true,
-      consent: state.consent === true
+      consent: state.consent === true,
+      turnstileToken: token,
+      website: hp ? hp.value : '',
+      elapsedMs: formOpenedAt ? Date.now() - formOpenedAt : 0
     }).then(function () {
       goTo('done');
     }).catch(function (ex) {
@@ -302,6 +312,9 @@
     closeProvinceDropdown();
     hideFlavourBottle();
     resetTurnstile();
+    formOpenedAt = 0;
+    var hp = $('f-website');
+    if (hp) hp.value = '';
     goTo('landing');
   });
 

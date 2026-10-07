@@ -17,6 +17,8 @@ export interface EntryPayload {
   optIn?: boolean;
   consent?: boolean;
   turnstileToken?: string;
+  website?: string;
+  elapsedMs?: number;
 }
 
 export const FLAVOURS = [

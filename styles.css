@@ -434,26 +434,26 @@ input::placeholder { color: #BABABA; }
   height: 55.5%;
   background: #fff;
   border-radius: min(6cqw, 3.375cqh);
-  padding: min(3.6cqw, 2.025cqh) min(5cqw, 2.8125cqh);
+  padding: min(3cqw, 1.6875cqh) min(5cqw, 2.8125cqh);
   display: flex;
   flex-direction: column;
-  gap: min(1.6cqw, 0.9cqh);
+  gap: min(1.1cqw, 0.6cqh);
   color: var(--oros-text);
 }
 .form .field {
   display: flex;
   flex-direction: column;
-  gap: min(1.2cqw, 0.675cqh);
+  gap: min(0.8cqw, 0.45cqh);
   font-weight: 800;
-  font-size: min(3.6cqw, 2.025cqh);
+  font-size: min(3.2cqw, 1.8cqh);
 }
 .form input[type="text"],
 .form input[type="tel"] {
-  height: min(8.2cqw, 4.6125cqh);
+  height: min(7.2cqw, 4.05cqh);
   border: min(0.5cqw, 0.28125cqh) solid #c4c4c4;
   border-radius: 999px;
   padding: 0 min(4.5cqw, 2.53125cqh);
-  font-size: min(4cqw, 2.25cqh);
+  font-size: min(3.6cqw, 2.025cqh);
   font-weight: 400;
   color: var(--oros-text);
   outline: none;
@@ -461,6 +461,16 @@ input::placeholder { color: #BABABA; }
   background: #fff;
 }
 .form input:focus { border-color: var(--oros-cyan); }
+
+/* Honeypot: visually hidden but reachable by naive bots that fill every input. */
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
 
 /* ---------- Flavour bottle popup ----------
    Pops into the top-right of the form stage when a flavour is picked.
@@ -513,14 +523,14 @@ input::placeholder { color: #BABABA; }
   display: flex;
   align-items: center;
   gap: min(2.2cqw, 1.24cqh);
-  height: min(8.2cqw, 4.6125cqh);
+  height: min(7.2cqw, 4.05cqh);
   width: 100%;
   border: min(0.5cqw, 0.28125cqh) solid #c4c4c4;
   border-radius: 999px;
   padding: 0 min(4.5cqw, 2.53125cqh);
   background: #fff;
   font-family: inherit;
-  font-size: min(4cqw, 2.25cqh);
+  font-size: min(3.6cqw, 2.025cqh);
   font-weight: 400;
   color: var(--oros-text);
   cursor: pointer;
@@ -632,7 +642,7 @@ input::placeholder { color: #BABABA; }
   margin-top: auto;
   flex: none;
   width: 100%;
-  height: min(12cqw, 6.75cqh);
+  height: min(10.5cqw, 5.9cqh);
   display: flex;
   align-items: center;
   justify-content: center;
