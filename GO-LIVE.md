@@ -3,33 +3,22 @@
 Short reference for recurring operational tasks on the live site.
 Deployment stack: Cloudflare Pages + Workers (Pages Functions) + D1 + Turnstile + Zero Trust Access.
 
-> **⚠ Turnstile is currently PARKED.** The entry form submits without CAPTCHA verification. See [Pre-launch: un-park Turnstile](#pre-launch-un-park-turnstile) before go-live.
-
 ---
 
-## Pre-launch: un-park Turnstile
+## Abuse defences
 
-Turnstile verification was temporarily disabled during pre-launch work. The relevant code is still in the tree, marked with `PARKED:` comments. Un-parking is a straight revert of five edits — no infra changes needed (the production `TURNSTILE_SECRET` is still set in Pages, and `TURNSTILE_SITE_KEY` is still in `wrangler.toml`).
+The entry endpoint has layered defences, from cheapest to strongest:
 
-Find all un-park points:
+| Layer | Where | What it blocks |
+|---|---|---|
+| Honeypot `website` field | [`index.html`](index.html), [`functions/api/entries.ts`](functions/api/entries.ts) | Dumb bots that fill every input |
+| Minimum fill time (2s) | [`functions/api/entries.ts`](functions/api/entries.ts) `MIN_FORM_FILL_MS` | Scripted POSTs that don't wait like a human |
+| Turnstile | [`functions/api/entries.ts`](functions/api/entries.ts) `verifyTurnstile` | Bulk headless submissions and known-bad clients |
+| Per-IP rate limit | [`functions/api/entries.ts`](functions/api/entries.ts) `MAX_PER_IP_PER_HOUR` (200) | Runaway abuse from a single network |
+| Unique phone constraint | `schema.sql` `UNIQUE(campaign, phone)` | Exact-duplicate submissions |
+| Post-draw OTP | Manual (see below) | Fake-but-unique phone numbers winning the draw |
 
-```bash
-grep -rn "PARKED:" .
-```
-
-You'll find them in:
-
-| File | What to restore |
-|---|---|
-| `functions/api/entries.ts` | Uncomment the `verifyTurnstile` call + the 400 return |
-| `app.js` (goTo) | Restore `if (step === 'form') mountTurnstile();` |
-| `app.js` (submit handler) | Restore the token-presence check and `turnstileToken: token` payload field |
-| `index.html` (`<head>`) | Uncomment the Turnstile `<script>` tag |
-| `index.html` (form) | Uncomment the `<div class="cf-turnstile">` widget |
-
-After un-parking, test locally with Cloudflare's test keys (see [Local development](#local-development)) before pushing.
-
-**Risk of leaving Turnstile parked at go-live:** the only submission-rate defense is `MAX_PER_IP_PER_HOUR = 5` in [`functions/api/entries.ts`](functions/api/entries.ts) + the `UNIQUE(campaign, phone)` DB constraint. Bots can still burn through the IP cap and pollute the DB.
+The per-IP cap is deliberately high (200/hr) to accommodate shared-IP kiosk use at marketing activations. Draw integrity relies on **post-draw OTP** rather than entry-time verification.
 
 ---
 
@@ -174,22 +163,15 @@ Bypasses GitHub integration entirely. Useful when the "disconnected from Git" ba
 ```bash
 npm install
 echo 'DAILY_SALT="localdev-salt-32chars-minimum"' > .dev.vars
+echo 'TURNSTILE_SECRET="1x0000000000000000000000000000000AA"' >> .dev.vars
 npm run db:migrate:local
 npm run dev
 # http://localhost:8788
 ```
 
-While Turnstile is parked (see top of this doc), the form submits locally without a CAPTCHA challenge.
+Staging `wrangler.toml` already uses Cloudflare's always-pass test site key (`1x00000000000000000000AA`), paired with the always-pass test secret above in `.dev.vars`. The widget auto-solves and `siteverify` returns `success: true` with no interactive challenge.
 
-### Testing with Turnstile re-enabled
-
-Once un-parked, use Cloudflare's always-pass test keys (public, documented by Cloudflare) so you don't need a real widget locally:
-
-1. In `wrangler.toml` temporarily set `TURNSTILE_SITE_KEY = "1x00000000000000000000AA"`.
-2. In `.dev.vars` add `TURNSTILE_SECRET="1x0000000000000000000000000000000AA"`.
-3. Restart `npm run dev`. The widget auto-solves, the token POSTs, and `siteverify` returns `success: true`.
-
-Other Cloudflare test variants for exercising failure paths:
+### Cloudflare test key variants
 
 | Purpose | Site key | Secret |
 |---|---|---|
@@ -197,7 +179,7 @@ Other Cloudflare test variants for exercising failure paths:
 | Always blocks | `2x00000000000000000000AB` | `2x0000000000000000000000000000000AA` |
 | Token always invalid server-side | — | `3x0000000000000000000000000000000AA` |
 
-**Revert `wrangler.toml` before committing.** `.dev.vars` is gitignored; `wrangler.toml` is not.
+Swap these into `wrangler.toml` / `.dev.vars` to test failure paths locally. **Revert `wrangler.toml` before committing** — `.dev.vars` is gitignored; `wrangler.toml` is not.
 
 ### Local D1 gotcha
 
@@ -205,10 +187,54 @@ Other Cloudflare test variants for exercising failure paths:
 
 ---
 
+## Post-draw winner verification (OTP)
+
+The draw happens after the campaign closes (`15 December 2026`). Because entry-time verification would introduce friction and SMS cost per entry, draw integrity is enforced *after* the draw, not before: a selected number only becomes a confirmed winner once an SMS code sent to them is entered back on a verification page. If they don't verify within the window, they forfeit and a backup is drawn.
+
+This is already covered by the T&Cs — clause 6.3 allows the Promoter to substitute a backup if a finalist can't be contacted. SMS verification is the operational mechanism for "cannot be successfully contacted."
+
+### Flow
+
+1. **Draw** — Random-sample 10 winners + ~20 backups from `submissions` where `campaign = <current campaign>` and `consent = 1`.
+2. **For each drawn number:**
+   1. Admin triggers `POST /api/admin/draw/send-otp` with the submission id.
+   2. Server generates a 6-digit code, stores a hash of it + an expiry (24h) against the submission, and sends an SMS: *"Oros Stokvel: your winner verification code is 123456. Enter it at https://oros.co.za/verify to claim your R2,000 prize. Reply STOP to opt out."*
+   3. Winner receives SMS and enters the code at `/verify`.
+   4. `POST /api/verify` checks the code hash, marks `verified_at` on the submission.
+3. **Admin dashboard shows status per winner:** `pending`, `verified`, `expired`. Expired slots trigger a redraw from the backup pool.
+4. **After all 10 verified,** export the final list for prize fulfilment.
+
+### What needs building
+
+- [ ] `winners` table (or columns on `submissions`): `otp_hash`, `otp_sent_at`, `otp_expires_at`, `verified_at`, `attempts`.
+- [ ] `functions/api/admin/draw/*` — draw endpoint, resend-OTP endpoint, redraw endpoint. Admin-authenticated.
+- [ ] `functions/api/verify.ts` — public endpoint, rate-limited (3 attempts per submission before lockout).
+- [ ] `/verify` HTML page — single input + submit, no personal data entry.
+- [ ] SMS provider integration — Clickatell or BulkSMS. Secret: `SMS_API_KEY`.
+- [ ] Admin UI additions on `admin.html` — "Run draw", status table, "Resend OTP", "Redraw".
+
+### Cost estimate
+
+- 10 winners + ~20 backups × up to 3 SMS retries = ~90 SMS worst case.
+- At ~R0.30/SMS = ~R27 total. Negligible against R20,000 prize pool.
+
+### SMS provider choice (TBD)
+
+| Provider | Cost/SMS | Notes |
+|---|---|---|
+| BulkSMS | ~R0.25 | SA-based, no setup fee, simple REST API |
+| Clickatell | ~R0.30 | Mature, well-documented, works globally |
+| Twilio | ~R0.50 | Overkill for a one-off campaign |
+
+Decision needed before draw week.
+
+---
+
 ## Known open items
 
 - **Scheduled 90-day cleanup cron** — currently manual (see D1 section).
 - **Winner-selection UI** in admin page — currently no way to flag a winner.
+- **Post-draw OTP flow** — not yet built; see [Post-draw winner verification](#post-draw-winner-verification-otp).
 - **POPIA Ts & Cs page** at `/terms.html` — consent checkbox links here but the page doesn't exist yet.
 
 ---

@@ -462,6 +462,16 @@ input::placeholder { color: #BABABA; }
 }
 .form input:focus { border-color: var(--oros-cyan); }
 
+/* Honeypot: visually hidden but reachable by naive bots that fill every input. */
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 /* ---------- Flavour bottle popup ----------
    Pops into the top-right of the form stage when a flavour is picked.
    Starts off-stage (scaled, rotated, translated down), bounces in, then

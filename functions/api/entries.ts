@@ -2,7 +2,8 @@ import type { Env, EntryPayload } from '../_shared/types';
 import { FLAVOURS, PROVINCES } from '../_shared/types';
 import { json, normalizePhone, sha256, verifyTurnstile } from '../_shared/util';
 
-const MAX_PER_IP_PER_HOUR = 5;
+const MAX_PER_IP_PER_HOUR = 200;
+const MIN_FORM_FILL_MS = 2000;
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   let body: EntryPayload;
@@ -10,6 +11,16 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     body = await request.json();
   } catch {
     return json({ error: 'Invalid JSON.' }, 400);
+  }
+
+  // Honeypot: hidden field only bots fill. Silent-ish rejection — don't leak the trick.
+  if ((body.website ?? '').trim() !== '') {
+    return json({ error: 'Something went wrong. Please try again.' }, 400);
+  }
+
+  // Minimum fill time: a human cannot complete the form in under 2 seconds.
+  if (typeof body.elapsedMs !== 'number' || body.elapsedMs < MIN_FORM_FILL_MS) {
+    return json({ error: 'Something went wrong. Please try again.' }, 400);
   }
 
   const ip = request.headers.get('CF-Connecting-IP');
