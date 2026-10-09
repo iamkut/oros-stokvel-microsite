@@ -1057,6 +1057,108 @@ body.admin-page a:hover { color: var(--oros-yellow); }
 }
 .fld input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.6); }
 
+/* Searchable combobox used in the admin filter rail. Button mimics .fld select,
+   panel reuses the dark filter palette for a visual match. */
+.combo { position: relative; }
+.combo-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: #0f1538;
+  border: 1px solid rgba(139, 165, 255, 0.18);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+.combo-btn:hover { border-color: rgba(139, 165, 255, 0.35); }
+.combo-btn:focus-visible,
+.combo-btn[aria-expanded="true"] {
+  border-color: var(--oros-sky);
+  background: #0a1030;
+}
+.combo-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.combo-btn:not(.selected) .combo-label { color: #8ba0d8; }
+.combo-chevron {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  stroke: #8ba0d8;
+  transition: transform 0.2s;
+}
+.combo-btn[aria-expanded="true"] .combo-chevron { transform: rotate(180deg); }
+.combo-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: #0f1538;
+  border: 1px solid rgba(139, 165, 255, 0.28);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.combo-panel[hidden] { display: none; }
+.combo-search {
+  width: 100%;
+  background: #0a1030;
+  border: 1px solid rgba(139, 165, 255, 0.18);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.combo-search:focus { border-color: var(--oros-sky); }
+.combo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.combo-list::-webkit-scrollbar { width: 8px; }
+.combo-list::-webkit-scrollbar-thumb {
+  background: rgba(139, 165, 255, 0.25);
+  border-radius: 4px;
+}
+.combo-opt {
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+.combo-opt:hover { background: rgba(139, 165, 255, 0.12); }
+.combo-opt[aria-selected="true"] {
+  background: rgba(10, 155, 224, 0.18);
+  font-weight: 800;
+}
+.combo-opt.all { color: #8ba0d8; font-style: italic; }
+.combo-empty {
+  padding: 7px 10px;
+  color: #8ba0d8;
+  font-size: 13px;
+  font-style: italic;
+}
+
 /* Breakdown bars */
 .breakdown {
   display: flex;
