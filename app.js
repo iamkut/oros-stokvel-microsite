@@ -155,10 +155,15 @@
 
     function tryRender() {
       if (!window.turnstile) { setTimeout(tryRender, 150); return; }
+      // Turnstile 'flexible' has a ~300px minimum render width; if the card
+      // is narrower than that (short-height desktop windows) the widget
+      // overflows the card. Fall back to 'compact' in that case.
+      var w = container.getBoundingClientRect().width;
+      var size = w >= 310 ? 'flexible' : 'compact';
       turnstileWidgetId = window.turnstile.render(container, {
         sitekey: cfg.turnstileSiteKey,
         theme: 'light',
-        size: 'flexible'
+        size: size
       });
     }
     tryRender();
