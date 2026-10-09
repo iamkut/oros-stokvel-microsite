@@ -434,26 +434,26 @@ input::placeholder { color: #BABABA; }
   height: 61%;
   background: #fff;
   border-radius: min(6cqw, 3.375cqh);
-  padding: min(2.2cqw, 1.25cqh) min(5cqw, 2.8125cqh);
+  padding: min(2.6cqw, 1.5cqh) min(5cqw, 2.8125cqh);
   display: flex;
   flex-direction: column;
-  gap: min(0.7cqw, 0.4cqh);
+  gap: min(1.4cqw, 0.8cqh);
   color: var(--oros-text);
 }
 .form .field {
   display: flex;
   flex-direction: column;
-  gap: min(0.5cqw, 0.3cqh);
+  gap: min(0.9cqw, 0.5cqh);
   font-weight: 800;
-  font-size: min(3cqw, 1.7cqh);
+  font-size: min(3.3cqw, 1.85cqh);
 }
 .form input[type="text"],
 .form input[type="tel"] {
-  height: min(7.2cqw, 4.05cqh);
+  height: min(8.2cqw, 4.6cqh);
   border: min(0.5cqw, 0.28125cqh) solid #c4c4c4;
   border-radius: 999px;
   padding: 0 min(4.5cqw, 2.53125cqh);
-  font-size: min(3.6cqw, 2.025cqh);
+  font-size: min(3.9cqw, 2.2cqh);
   font-weight: 400;
   color: var(--oros-text);
   outline: none;
@@ -523,14 +523,14 @@ input::placeholder { color: #BABABA; }
   display: flex;
   align-items: center;
   gap: min(2.2cqw, 1.24cqh);
-  height: min(7.2cqw, 4.05cqh);
+  height: min(8.2cqw, 4.6cqh);
   width: 100%;
   border: min(0.5cqw, 0.28125cqh) solid #c4c4c4;
   border-radius: 999px;
   padding: 0 min(4.5cqw, 2.53125cqh);
   background: #fff;
   font-family: inherit;
-  font-size: min(3.6cqw, 2.025cqh);
+  font-size: min(3.9cqw, 2.2cqh);
   font-weight: 400;
   color: var(--oros-text);
   cursor: pointer;
@@ -659,17 +659,18 @@ input::placeholder { color: #BABABA; }
 .consent {
   display: flex;
   align-items: flex-start;
-  gap: min(1.8cqw, 1.0125cqh);
-  font-size: min(2.5cqw, 1.40625cqh);
+  gap: min(2.2cqw, 1.24cqh);
+  font-size: min(2.9cqw, 1.63cqh);
   font-weight: 400;
-  line-height: 1.3;
+  line-height: 1.35;
   cursor: pointer;
   color: var(--oros-text);
+  margin-top: min(0.6cqw, 0.35cqh);
 }
 .consent input {
-  width: min(4cqw, 2.25cqh);
-  height: min(4cqw, 2.25cqh);
-  margin-top: min(0.1cqw, 0.05625cqh);
+  width: min(4.6cqw, 2.6cqh);
+  height: min(4.6cqw, 2.6cqh);
+  margin-top: min(0.3cqw, 0.17cqh);
   accent-color: var(--oros-pink);
   flex: none;
   cursor: pointer;
