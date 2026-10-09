@@ -130,7 +130,6 @@
     clearError();
     if (step === 'form') {
       if (!formOpenedAt) formOpenedAt = Date.now();
-      mountTurnstile();
     }
   }
   function clearError() { $('f-error').textContent = ''; }
