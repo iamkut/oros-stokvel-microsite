@@ -161,6 +161,19 @@
           <ul class="flavour-dd-list" id="f-province-list" role="listbox" tabindex="-1" hidden></ul>
         </div>
       </div>
+      <div class="field">Store:
+        <div class="flavour-dd" id="f-store-dd">
+          <button type="button" class="flavour-dd-btn" id="f-store-btn"
+                  aria-haspopup="listbox" aria-expanded="false" disabled>
+            <span class="flavour-dd-label" id="f-store-label">Select your province first</span>
+            <svg class="flavour-dd-chevron" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="flavour-dd-list store-dd-list" id="f-store-panel" hidden>
+            <input type="search" id="f-store-search" class="store-dd-search" placeholder="Search stores..." autocomplete="off">
+            <ul id="f-store-list" role="listbox" tabindex="-1" class="store-dd-ul"></ul>
+          </div>
+        </div>
+      </div>
       <label class="consent">
         <input type="checkbox" id="f-consent">
         <span>I am 18 or older and accept the

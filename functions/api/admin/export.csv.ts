@@ -17,7 +17,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const filters = parseFilters(url);
   const rows = await queryEntries(env, filters);
 
-  const header = ['timestamp', 'name', 'phone', 'flavour', 'province', 'opt_in', 'consent'];
+  const header = ['timestamp', 'name', 'phone', 'flavour', 'province', 'store', 'opt_in', 'consent'];
   const lines = [header.join(',')];
   for (const r of rows) {
     lines.push([
@@ -26,6 +26,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       csvEscape(r.phone),
       csvEscape(r.flavour),
       csvEscape(r.province),
+      csvEscape(r.store),
       r.opt_in ? 'Yes' : 'No',
       r.consent ? 'Yes' : 'No'
     ].join(','));

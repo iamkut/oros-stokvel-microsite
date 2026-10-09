@@ -2,6 +2,47 @@
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
 
+  // Full known store list, flattened + deduped from the province map used by
+  // the public form. Keeping it in sync here lets the admin filter show every
+  // valid store even before any submissions reference it. "Other" is the
+  // free-form bucket submitted when no listed store matches.
+  var STORES_BY_PROVINCE = {
+    'Eastern Cape': ['Trade Value', 'Afri-save Kariega', 'Trade Value Gqeberha', 'Broadway Gqeberha'],
+    'Free State': ['Bibi Cash & Carry - Qwaqwa', 'Devland Cash & Carry Welkom', 'TFS Bloemfontein', 'Transito Cash & Carry Welkom'],
+    'Gauteng': [
+      'Devland Cash & Carry Johannesburg', 'Advance Pretoria', 'Kit Kat Pretoria West', 'Kit Kat Silverton',
+      'Kit Kat Benoni', 'Kit Kat Mamelodi', 'Kit Kat Kliptown', 'Big Save Waltloo', 'Big Save Mabopane',
+      'Big Save Hammanskraal', 'Big Save Tshwane Market', 'Big Save Marble Hall', 'Hazyview Cash & Carry',
+      'Savemoor Cash & Carry', 'Savemoor Tembisa', 'Sunshine Westgate', 'Sunshine Electron', 'Sunshine Plaza',
+      'Devland Springs', 'Makro Germiston', 'Makro Riversands', 'Makro Crown Mines'
+    ],
+    'KwaZulu-Natal': [
+      'Trade Port - Phoenix', 'Bargain Wholesaler', 'Phoenix Cash & Carry - Empangeni', 'Supersave PMB',
+      'Macksons uMzimkhulu', 'Phoenix Cash & Carry - Pietermaritzburg', 'Phoenix Cash & Carry - Prospecton',
+      'Jadwats', 'Makro Amanzimtoti'
+    ],
+    'Limpopo': ['Kismat Cash & Carry'],
+    'Mpumalanga': ['Happy Family Witbank', 'Goldfields Witbank', 'Devland Ermelo', 'Otees Cash & Carry'],
+    'Northern Cape': [],
+    'North West': [
+      'Food Town Hyper Thlabane Monareng Street', 'Three Star Cash & Carry Rustenburg',
+      'Trans Food Town Hyper Klopper Street', 'Powertrade Kuruman', 'Powertrade Vryburg Cash & Carry'
+    ],
+    'Western Cape': ['Foodtown Hyper Khayelitsha', 'Makro Ottery']
+  };
+  var ALL_STORES = (function () {
+    var seen = Object.create(null);
+    var flat = [];
+    Object.keys(STORES_BY_PROVINCE).forEach(function (p) {
+      STORES_BY_PROVINCE[p].forEach(function (s) {
+        if (!seen[s]) { seen[s] = true; flat.push(s); }
+      });
+    });
+    flat.sort(function (a, b) { return a.localeCompare(b); });
+    flat.push('Other');
+    return flat;
+  })();
+
   var SAST_FMT = new Intl.DateTimeFormat('sv-SE', {
     timeZone: 'Africa/Johannesburg',
     year: 'numeric', month: '2-digit', day: '2-digit',
@@ -34,11 +75,14 @@
     sort: { key: 'created_at', dir: 'desc' }
   };
 
+  var storeFilter = '';
+
   function readFilters() {
     return {
       q: $('f-q').value.trim(),
       flavour: $('f-flavour').value,
       province: $('f-province').value,
+      store: storeFilter,
       optIn: $('f-optin').value,
       from: $('f-from').value,
       to: $('f-to').value
@@ -49,6 +93,7 @@
     if (f.q) p.set('q', f.q);
     if (f.flavour) p.set('flavour', f.flavour);
     if (f.province) p.set('province', f.province);
+    if (f.store) p.set('store', f.store);
     if (f.optIn) p.set('optIn', f.optIn);
     if (f.from) p.set('from', f.from);
     if (f.to) p.set('to', f.to);
@@ -64,6 +109,7 @@
     }
     if (f.flavour && r.flavour !== f.flavour) return false;
     if (f.province && r.province !== f.province) return false;
+    if (f.store && r.store !== f.store) return false;
     if (f.optIn === '1' && !r.opt_in) return false;
     if (f.optIn === '0' && r.opt_in) return false;
     if (f.from || f.to) {
@@ -193,6 +239,7 @@
     { key: 'phone', label: 'Phone', sortable: true },
     { key: 'flavour', label: 'Flavour', sortable: true },
     { key: 'province', label: 'Province', sortable: true },
+    { key: 'store', label: 'Store', sortable: true },
     { key: 'opt_in', label: 'Opt-in', sortable: true },
     { key: 'consent', label: 'Consent', sortable: true }
   ];
@@ -261,6 +308,7 @@
       appendCell(tr, r.phone || '', 'mono');
       appendCell(tr, r.flavour || '');
       appendCell(tr, r.province || '');
+      appendCell(tr, r.store || '');
       appendBadge(tr, r.opt_in, 'Yes', 'No');
       appendBadge(tr, r.consent, 'Yes', 'No');
       tbody.appendChild(tr);
@@ -347,11 +395,100 @@
     $('f-q').value = '';
     $('f-flavour').value = '';
     $('f-province').value = '';
+    setStoreFilter('');
     $('f-optin').value = '';
     $('f-from').value = '';
     $('f-to').value = '';
     renderAll();
   }
+
+  // ---------- Store searchable combobox ----------
+  var storeBtn    = $('f-store-btn');
+  var storePanel  = $('f-store-panel');
+  var storeList   = $('f-store-list');
+  var storeLabel  = $('f-store-label');
+  var storeSearch = $('f-store-search');
+
+  function setStoreFilter(value) {
+    storeFilter = value || '';
+    storeLabel.textContent = storeFilter || 'All';
+    storeBtn.classList.toggle('selected', !!storeFilter);
+  }
+
+  function renderStoreCombo(filter) {
+    storeList.replaceChildren();
+    var q = (filter || '').trim().toLowerCase();
+
+    var allLi = document.createElement('li');
+    allLi.className = 'combo-opt all';
+    allLi.setAttribute('role', 'option');
+    allLi.setAttribute('data-value', '');
+    allLi.setAttribute('aria-selected', storeFilter === '' ? 'true' : 'false');
+    allLi.textContent = 'All stores';
+    allLi.addEventListener('click', function () { pickStore(''); });
+    storeList.appendChild(allLi);
+
+    var shown = 0;
+    ALL_STORES.forEach(function (name) {
+      if (q && name.toLowerCase().indexOf(q) === -1) return;
+      var li = document.createElement('li');
+      li.className = 'combo-opt';
+      li.setAttribute('role', 'option');
+      li.setAttribute('data-value', name);
+      li.setAttribute('aria-selected', storeFilter === name ? 'true' : 'false');
+      li.textContent = name;
+      li.addEventListener('click', function () { pickStore(name); });
+      storeList.appendChild(li);
+      shown++;
+    });
+    if (!shown && q) {
+      var empty = document.createElement('li');
+      empty.className = 'combo-empty';
+      empty.textContent = 'No stores match "' + q + '".';
+      storeList.appendChild(empty);
+    }
+  }
+
+  function openStoreCombo() {
+    storePanel.hidden = false;
+    storeBtn.setAttribute('aria-expanded', 'true');
+    renderStoreCombo(storeSearch.value);
+    setTimeout(function () { storeSearch.focus(); }, 0);
+  }
+  function closeStoreCombo() {
+    storePanel.hidden = true;
+    storeBtn.setAttribute('aria-expanded', 'false');
+  }
+  function pickStore(name) {
+    setStoreFilter(name);
+    closeStoreCombo();
+    renderAll();
+  }
+
+  storeBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (storePanel.hidden) openStoreCombo(); else closeStoreCombo();
+  });
+  storeSearch.addEventListener('input', function () {
+    renderStoreCombo(storeSearch.value);
+  });
+  storeSearch.addEventListener('click', function (e) { e.stopPropagation(); });
+  storeSearch.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      var first = storeList.querySelector('.combo-opt:not(.all)');
+      if (first) pickStore(first.getAttribute('data-value'));
+    }
+  });
+  document.addEventListener('click', function (e) {
+    if (!storePanel.hidden && !$('store-combo').contains(e.target)) closeStoreCombo();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !storePanel.hidden) {
+      closeStoreCombo();
+      storeBtn.focus();
+    }
+  });
 
   // Debounced search typing
   var qTimer = null;
@@ -373,6 +510,9 @@
     if (e.key === 'r' || e.key === 'R') { load(); }
     if (e.key === '/') { e.preventDefault(); $('f-q').focus(); }
   });
+
+  setStoreFilter('');
+  renderStoreCombo('');
 
   loadMe()
     .then(function (data) {
