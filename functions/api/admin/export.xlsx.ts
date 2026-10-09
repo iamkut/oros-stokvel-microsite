@@ -20,6 +20,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       { header: 'Phone', width: 16 },
       { header: 'Flavour', width: 14 },
       { header: 'Province', width: 16 },
+      { header: 'Store', width: 30 },
       { header: 'Opt-in', width: 10 },
       { header: 'Consent', width: 10 }
     ],
@@ -29,6 +30,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       r.phone,
       r.flavour,
       r.province ?? '',
+      r.store ?? '',
       r.opt_in ? 'Yes' : 'No',
       r.consent ? 'Yes' : 'No'
     ])

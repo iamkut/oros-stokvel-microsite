@@ -17,9 +17,82 @@
     'Limpopo', 'Mpumalanga', 'Northern Cape', 'North West', 'Western Cape'
   ];
 
+  var OTHER_STORE = 'Other';
+
+  var STORES_BY_PROVINCE = {
+    'Eastern Cape': [
+      'Trade Value',
+      'Afri-save Kariega',
+      'Trade Value Gqeberha',
+      'Broadway Gqeberha'
+    ],
+    'Free State': [
+      'Bibi Cash & Carry - Qwaqwa',
+      'Devland Cash & Carry Welkom',
+      'TFS Bloemfontein',
+      'Transito Cash & Carry Welkom'
+    ],
+    'Gauteng': [
+      'Devland Cash & Carry Johannesburg',
+      'Advance Pretoria',
+      'Kit Kat Pretoria West',
+      'Kit Kat Silverton',
+      'Kit Kat Benoni',
+      'Kit Kat Mamelodi',
+      'Kit Kat Kliptown',
+      'Big Save Waltloo',
+      'Big Save Mabopane',
+      'Big Save Hammanskraal',
+      'Big Save Tshwane Market',
+      'Big Save Marble Hall',
+      'Hazyview Cash & Carry',
+      'Savemoor Cash & Carry',
+      'Savemoor Tembisa',
+      'Sunshine Westgate',
+      'Sunshine Electron',
+      'Sunshine Plaza',
+      'Devland Springs',
+      'Makro Germiston',
+      'Makro Riversands',
+      'Makro Crown Mines'
+    ],
+    'KwaZulu-Natal': [
+      'Trade Port - Phoenix',
+      'Bargain Wholesaler',
+      'Phoenix Cash & Carry - Empangeni',
+      'Supersave PMB',
+      'Macksons uMzimkhulu',
+      'Phoenix Cash & Carry - Pietermaritzburg',
+      'Phoenix Cash & Carry - Prospecton',
+      'Jadwats',
+      'Makro Amanzimtoti'
+    ],
+    'Limpopo': [
+      'Kismat Cash & Carry'
+    ],
+    'Mpumalanga': [
+      'Happy Family Witbank',
+      'Goldfields Witbank',
+      'Devland Ermelo',
+      'Otees Cash & Carry'
+    ],
+    'Northern Cape': [],
+    'North West': [
+      'Food Town Hyper Thlabane Monareng Street',
+      'Three Star Cash & Carry Rustenburg',
+      'Trans Food Town Hyper Klopper Street',
+      'Powertrade Kuruman',
+      'Powertrade Vryburg Cash & Carry'
+    ],
+    'Western Cape': [
+      'Foodtown Hyper Khayelitsha',
+      'Makro Ottery'
+    ]
+  };
+
   var state = {
     step: 'landing', optIn: null, name: '', phone: '',
-    flavour: '', province: '', consent: false
+    flavour: '', province: '', store: '', consent: false
   };
   var turnstileWidgetId = null;
   var formOpenedAt = 0;
@@ -68,6 +141,7 @@
     if (!/^(\+27|0)\d{9}$/.test(phone)) return 'Please enter a valid SA contact number.';
     if (!state.flavour) return 'Please select a flavour.';
     if (!state.province) return 'Please select your province.';
+    if (!state.store) return 'Please select your store.';
     if (!state.consent) return 'Please confirm you are 18+ and accept the Ts & Cs.';
     return null;
   }
@@ -225,11 +299,13 @@
     });
     closeProvinceDropdown();
     clearError();
+    resetStoreSelection();
+    enableStoreDropdown(p);
   }
 
   pvBtn.addEventListener('click', function (e) {
     e.stopPropagation();
-    if (pvList.hidden) { closeDropdown(); openProvinceDropdown(); }
+    if (pvList.hidden) { closeDropdown(); closeStoreDropdown(); openProvinceDropdown(); }
     else closeProvinceDropdown();
   });
   document.addEventListener('click', function (e) {
@@ -239,6 +315,96 @@
     if (e.key === 'Escape' && !pvList.hidden) {
       closeProvinceDropdown();
       pvBtn.focus();
+    }
+  });
+
+  // ---------- Store dropdown (searchable, province-filtered) ----------
+  var stBtn    = $('f-store-btn');
+  var stPanel  = $('f-store-panel');
+  var stList   = $('f-store-list');
+  var stLabel  = $('f-store-label');
+  var stSearch = $('f-store-search');
+
+  function storeOptionsFor(province) {
+    var list = (STORES_BY_PROVINCE[province] || []).slice();
+    list.push(OTHER_STORE);
+    return list;
+  }
+
+  function enableStoreDropdown(province) {
+    stBtn.disabled = false;
+    stLabel.textContent = 'Select your store';
+    renderStoreOptions(storeOptionsFor(province));
+  }
+
+  function resetStoreSelection() {
+    state.store = '';
+    stBtn.classList.remove('selected');
+    stLabel.textContent = 'Select your store';
+    stSearch.value = '';
+    closeStoreDropdown();
+  }
+
+  function renderStoreOptions(options, filter) {
+    stList.replaceChildren();
+    var q = (filter || '').trim().toLowerCase();
+    var shown = 0;
+    options.forEach(function (name) {
+      if (q && name.toLowerCase().indexOf(q) === -1) return;
+      var li = document.createElement('li');
+      li.className = 'flavour-dd-opt';
+      li.setAttribute('role', 'option');
+      li.setAttribute('data-value', name);
+      li.setAttribute('aria-selected', state.store === name ? 'true' : 'false');
+      li.innerHTML = '<span>' + name + '</span>';
+      li.addEventListener('click', function () { selectStore(name); });
+      stList.appendChild(li);
+      shown++;
+    });
+    if (!shown) {
+      var empty = document.createElement('li');
+      empty.className = 'store-dd-empty';
+      empty.textContent = 'No stores match. Pick "Other" above or try another search.';
+      stList.appendChild(empty);
+    }
+  }
+
+  function openStoreDropdown() {
+    if (stBtn.disabled) return;
+    stPanel.hidden = false;
+    stBtn.setAttribute('aria-expanded', 'true');
+    renderStoreOptions(storeOptionsFor(state.province), stSearch.value);
+    setTimeout(function () { stSearch.focus(); }, 0);
+  }
+  function closeStoreDropdown() {
+    stPanel.hidden = true;
+    stBtn.setAttribute('aria-expanded', 'false');
+  }
+  function selectStore(name) {
+    state.store = name;
+    stLabel.textContent = name;
+    stBtn.classList.add('selected');
+    closeStoreDropdown();
+    clearError();
+  }
+
+  stBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (stBtn.disabled) return;
+    if (stPanel.hidden) { closeDropdown(); closeProvinceDropdown(); openStoreDropdown(); }
+    else closeStoreDropdown();
+  });
+  stSearch.addEventListener('input', function () {
+    renderStoreOptions(storeOptionsFor(state.province), stSearch.value);
+  });
+  stSearch.addEventListener('click', function (e) { e.stopPropagation(); });
+  document.addEventListener('click', function (e) {
+    if (!stPanel.hidden && !$('f-store-dd').contains(e.target)) closeStoreDropdown();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !stPanel.hidden) {
+      closeStoreDropdown();
+      stBtn.focus();
     }
   });
 
@@ -274,6 +440,7 @@
       phone: state.phone.replace(/\s/g, ''),
       flavour: state.flavour,
       province: state.province,
+      store: state.store,
       optIn: state.optIn === true,
       consent: state.consent === true,
       turnstileToken: token,
@@ -292,7 +459,7 @@
   $('d-restart').addEventListener('click', function () {
     state = {
       step: 'landing', optIn: null, name: '', phone: '',
-      flavour: '', province: '', consent: false
+      flavour: '', province: '', store: '', consent: false
     };
     $('f-name').value = '';
     $('f-phone').value = '';
@@ -308,8 +475,14 @@
     Array.prototype.forEach.call(pvList.children, function (li) {
       li.setAttribute('aria-selected', 'false');
     });
+    stLabel.textContent = 'Select your province first';
+    stBtn.classList.remove('selected');
+    stBtn.disabled = true;
+    stSearch.value = '';
+    stList.replaceChildren();
     closeDropdown();
     closeProvinceDropdown();
+    closeStoreDropdown();
     hideFlavourBottle();
     resetTurnstile();
     formOpenedAt = 0;

@@ -1,5 +1,5 @@
 import type { Env, EntryPayload } from '../_shared/types';
-import { FLAVOURS, PROVINCES } from '../_shared/types';
+import { FLAVOURS, PROVINCES, isValidStore } from '../_shared/types';
 import { json, normalizePhone, sha256, verifyTurnstile } from '../_shared/util';
 
 const MAX_PER_IP_PER_HOUR = 200;
@@ -31,11 +31,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const phone = normalizePhone(body.phone ?? '');
   const flavour = body.flavour ?? '';
   const province = body.province ?? '';
+  const store = (body.store ?? '').trim();
 
   if (name.length < 2) return json({ error: 'Please enter your name and surname.' }, 400);
   if (!phone) return json({ error: 'Please enter a valid SA contact number.' }, 400);
   if (!FLAVOURS.includes(flavour)) return json({ error: 'Please select a flavour.' }, 400);
   if (!PROVINCES.includes(province)) return json({ error: 'Please select your province.' }, 400);
+  if (!store || !isValidStore(province, store)) return json({ error: 'Please select your store.' }, 400);
   if (body.consent !== true) return json({ error: 'Please confirm you are 18+ and accept the Ts & Cs.' }, 400);
 
   const ipHash = ip ? await sha256(ip + env.DAILY_SALT) : null;
@@ -52,13 +54,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   try {
     await env.DB.prepare(
-      `INSERT INTO submissions (name, phone, flavour, province, opt_in, consent, ip_hash, user_agent, campaign)
-       VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)`
+      `INSERT INTO submissions (name, phone, flavour, province, store, opt_in, consent, ip_hash, user_agent, campaign)
+       VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?)`
     ).bind(
       name,
       phone,
       flavour,
       province,
+      store,
       body.optIn === true ? 1 : 0,
       ipHash,
       request.headers.get('User-Agent') ?? '',

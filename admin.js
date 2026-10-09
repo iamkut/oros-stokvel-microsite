@@ -39,6 +39,7 @@
       q: $('f-q').value.trim(),
       flavour: $('f-flavour').value,
       province: $('f-province').value,
+      store: $('f-store').value.trim(),
       optIn: $('f-optin').value,
       from: $('f-from').value,
       to: $('f-to').value
@@ -49,6 +50,7 @@
     if (f.q) p.set('q', f.q);
     if (f.flavour) p.set('flavour', f.flavour);
     if (f.province) p.set('province', f.province);
+    if (f.store) p.set('store', f.store);
     if (f.optIn) p.set('optIn', f.optIn);
     if (f.from) p.set('from', f.from);
     if (f.to) p.set('to', f.to);
@@ -64,6 +66,7 @@
     }
     if (f.flavour && r.flavour !== f.flavour) return false;
     if (f.province && r.province !== f.province) return false;
+    if (f.store && r.store !== f.store) return false;
     if (f.optIn === '1' && !r.opt_in) return false;
     if (f.optIn === '0' && r.opt_in) return false;
     if (f.from || f.to) {
@@ -193,6 +196,7 @@
     { key: 'phone', label: 'Phone', sortable: true },
     { key: 'flavour', label: 'Flavour', sortable: true },
     { key: 'province', label: 'Province', sortable: true },
+    { key: 'store', label: 'Store', sortable: true },
     { key: 'opt_in', label: 'Opt-in', sortable: true },
     { key: 'consent', label: 'Consent', sortable: true }
   ];
@@ -261,6 +265,7 @@
       appendCell(tr, r.phone || '', 'mono');
       appendCell(tr, r.flavour || '');
       appendCell(tr, r.province || '');
+      appendCell(tr, r.store || '');
       appendBadge(tr, r.opt_in, 'Yes', 'No');
       appendBadge(tr, r.consent, 'Yes', 'No');
       tbody.appendChild(tr);
@@ -313,6 +318,7 @@
         setSub(
           state.all.length.toLocaleString() + ' total entries - last refresh ' + now + ' SAST'
         );
+        refreshStoreOptions();
         renderAll();
       })
       .catch(function (err) {
@@ -347,10 +353,29 @@
     $('f-q').value = '';
     $('f-flavour').value = '';
     $('f-province').value = '';
+    $('f-store').value = '';
     $('f-optin').value = '';
     $('f-from').value = '';
     $('f-to').value = '';
     renderAll();
+  }
+
+  function refreshStoreOptions() {
+    var dl = $('store-options');
+    if (!dl) return;
+    var seen = Object.create(null);
+    var names = [];
+    for (var i = 0; i < state.all.length; i++) {
+      var s = state.all[i].store;
+      if (s && !seen[s]) { seen[s] = true; names.push(s); }
+    }
+    names.sort();
+    dl.replaceChildren();
+    names.forEach(function (n) {
+      var o = document.createElement('option');
+      o.value = n;
+      dl.appendChild(o);
+    });
   }
 
   // Debounced search typing
@@ -358,6 +383,11 @@
   $('f-q').addEventListener('input', function () {
     if (qTimer) clearTimeout(qTimer);
     qTimer = setTimeout(renderAll, 150);
+  });
+  var storeTimer = null;
+  $('f-store').addEventListener('input', function () {
+    if (storeTimer) clearTimeout(storeTimer);
+    storeTimer = setTimeout(renderAll, 150);
   });
   ['f-flavour', 'f-province', 'f-optin', 'f-from', 'f-to'].forEach(function (id) {
     $(id).addEventListener('change', renderAll);
