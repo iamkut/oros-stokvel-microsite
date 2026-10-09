@@ -406,16 +406,16 @@ input::placeholder { color: #BABABA; }
 
 .form .yellow-sweep {
   position: absolute;
-  left: -12%; top: 40%;
-  width: 124%; height: 62%;
+  left: -12%; top: 36%;
+  width: 124%; height: 66%;
   background: var(--oros-yellow);
   border-radius: 50% 50% 0 0 / 22% 22% 0 0;
 }
 .form .ribbon {
   position: absolute;
-  left: 12%; top: 30%;
+  left: 12%; top: 26%;
   width: 76%;
-  height: 6.5%;
+  height: 6%;
   background: var(--oros-cyan);
   border-radius: min(4cqw, 2.25cqh);
   display: flex;
@@ -423,29 +423,29 @@ input::placeholder { color: #BABABA; }
   justify-content: center;
   text-align: center;
   font-weight: 800;
-  font-size: min(4.4cqw, 2.475cqh);
+  font-size: min(4.2cqw, 2.36cqh);
   line-height: 1.1;
   text-transform: uppercase;
 }
 .form .card {
   position: absolute;
-  left: 6%; top: 37%;
+  left: 6%; top: 32.5%;
   width: 88%;
-  height: 55.5%;
+  height: 61%;
   background: #fff;
   border-radius: min(6cqw, 3.375cqh);
-  padding: min(3cqw, 1.6875cqh) min(5cqw, 2.8125cqh);
+  padding: min(2.2cqw, 1.25cqh) min(5cqw, 2.8125cqh);
   display: flex;
   flex-direction: column;
-  gap: min(1.1cqw, 0.6cqh);
+  gap: min(0.7cqw, 0.4cqh);
   color: var(--oros-text);
 }
 .form .field {
   display: flex;
   flex-direction: column;
-  gap: min(0.8cqw, 0.45cqh);
+  gap: min(0.5cqw, 0.3cqh);
   font-weight: 800;
-  font-size: min(3.2cqw, 1.8cqh);
+  font-size: min(3cqw, 1.7cqh);
 }
 .form input[type="text"],
 .form input[type="tel"] {
