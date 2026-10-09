@@ -1,6 +1,6 @@
 import type { Env, EntryPayload } from '../_shared/types';
 import { FLAVOURS, PROVINCES, isValidStore } from '../_shared/types';
-import { json, normalizePhone, sha256, verifyTurnstile } from '../_shared/util';
+import { json, normalizePhone, sha256 } from '../_shared/util';
 
 const MAX_PER_IP_PER_HOUR = 200;
 const MIN_FORM_FILL_MS = 2000;
@@ -24,8 +24,6 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   const ip = request.headers.get('CF-Connecting-IP');
-  const turnstileOk = await verifyTurnstile(body.turnstileToken, env.TURNSTILE_SECRET, ip);
-  if (!turnstileOk) return json({ error: 'Verification failed. Please try again.' }, 400);
 
   const name = (body.name ?? '').trim();
   const phone = normalizePhone(body.phone ?? '');
