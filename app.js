@@ -434,9 +434,6 @@
     var err = validate();
     if (err) { $('f-error').textContent = err; return; }
 
-    var token = getTurnstileToken();
-    if (!token) { $('f-error').textContent = 'Please complete the verification challenge.'; return; }
-
     setSubmitting(true);
     var hp = $('f-website');
     submitEntry({
@@ -447,7 +444,7 @@
       store: state.store,
       optIn: state.optIn === true,
       consent: state.consent === true,
-      turnstileToken: token,
+      turnstileToken: '',
       website: hp ? hp.value : '',
       elapsedMs: formOpenedAt ? Date.now() - formOpenedAt : 0
     }).then(function () {
