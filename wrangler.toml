@@ -1,26 +1,21 @@
-name = "oros-stokvel-microsite-staging"
+name = "oros-stokvel-microsite"
 compatibility_date = "2026-01-01"
 pages_build_output_dir = "."
 
-# This file lives on the `staging` branch and powers the
-# `oros-stokvel-microsite-staging` Pages project (production branch: staging).
-# The production project (`oros-stokvel-microsite`, main branch) has its own
-# wrangler.toml with the prod D1/vars.
-
-# Cloudflare's always-passes Turnstile test key — safe for staging.
+# Public, safe to commit. Replace once you create the Turnstile widget in CF dashboard.
 [vars]
-TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
-CAMPAIGN = "stokvel-2026-staging"
+TURNSTILE_SITE_KEY = "0x4AAAAAAFNkE8HlNjCERtbP"
+CAMPAIGN = "stokvel-2026"
 ADMIN_USERNAME = "admin"
 
 # Secrets (set via dashboard or wrangler, NOT committed):
-#   wrangler pages secret put DAILY_SALT --project-name=oros-stokvel-microsite-staging
-#   wrangler pages secret put TURNSTILE_SECRET --project-name=oros-stokvel-microsite-staging
-#   wrangler pages secret put ADMIN_PASSWORD --project-name=oros-stokvel-microsite-staging
-#   wrangler pages secret put SESSION_SECRET --project-name=oros-stokvel-microsite-staging
-# For local dev, put the same values in .dev.vars (gitignored).
+#   wrangler pages secret put TURNSTILE_SECRET
+#   wrangler pages secret put DAILY_SALT
+#   wrangler pages secret put ADMIN_PASSWORD
+#   wrangler pages secret put SESSION_SECRET
 
+# D1 binding. Fill database_id after `npm run db:create`.
 [[d1_databases]]
 binding = "DB"
-database_name = "oros-stokvel-staging"
-database_id = "23f5b507-a4b3-4317-8bc3-13e9ff04b645"
+database_name = "oros-stokvel"
+database_id = "624d2ec2-820e-454b-8147-00a693f0ba15"

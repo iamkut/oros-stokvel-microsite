@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS submissions (
   phone       TEXT    NOT NULL,
   flavour     TEXT    NOT NULL,
   province    TEXT,
+  store       TEXT,
   opt_in      INTEGER NOT NULL CHECK (opt_in IN (0, 1)),
   consent     INTEGER NOT NULL CHECK (consent = 1),
   ip_hash     TEXT,
